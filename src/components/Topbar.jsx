@@ -1,6 +1,22 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Topbar() {
+
+  const navigate = useNavigate();
+  const token = localStorage.getItem("accessToken");
+  console.log(token);
+const handleLogout = () => {
+    console.log("logout clicked");
+
+    localStorage.removeItem("accessToken");
+
+    console.log("token:", localStorage.getItem("accessToken"));
+
+    navigate("/login");
+
+    console.log("navigation called");
+};
+
   return (
     <nav className="navbar bg-dark sticky-top ">
       <div className="container-fluid">
@@ -17,28 +33,16 @@ export default function Topbar() {
         <div className="d-flex align-items-center ms-auto ms-lg-0 me-3">
           <ul className="navbar-nav flex-row align-items-center me-3">
             <li className="nav-item ">
-              <Link to='/login' className="nav-link active text-light" aria-current="page" href="#">Login</Link>
+              {token ? (
+                <a onClick={handleLogout} className="nav-link active text-light" aria-current="page" href="#">Logout</a>
+              ) : (
+                <Link to='/login' className="nav-link active text-light" aria-current="page" href="#">Login</Link>
+              )}
             </li>
-            
+
           </ul>
         </div>
       </div>
     </nav>
   );
-}
-
-{
-  /* <div className="d-flex align-items-center border-bottom p-2 ">
-      <button
-        className="btn btn-outline-secondary d-lg-none"
-        type="button"
-        data-bs-toggle="offcanvas"
-        data-bs-target="#sidebarOffcanvas"
-        aria-controls="sidebarOffcanvas"
-      >
-      <span class="navbar-toggler-icon "></span>
-
-      </button>
-      <span className="ms-2 fw-bold">My Dashboard</span>
-    </div> */
 }

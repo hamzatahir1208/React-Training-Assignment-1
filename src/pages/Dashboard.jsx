@@ -8,6 +8,10 @@ import { useEffect, useState } from "react";
 export default function Dashboard() {
 
   const [users, setUsers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortField, setSortField] = useState("name");
+  const [sortOrder, setSortOrder] = useState("asc");
+
   useEffect(() => {
     const loadUsers = async () => {
       const data = await getUsers();
@@ -31,7 +35,6 @@ export default function Dashboard() {
     ]);
   };
 
-
   const handleDeleteUser = (id) => {
     setUsers((currentUsers) => {
       return currentUsers.filter((user) => user.id != id);
@@ -40,8 +43,8 @@ export default function Dashboard() {
 
   return (
     <Layout>
-      <div className="container ">
-        <div className="content mt-5 p-3">
+      <div className=" dashboard p-5">
+        <div className="content p-3">
           <h1>Dashboard</h1>
           <button
             type="button"
@@ -52,12 +55,73 @@ export default function Dashboard() {
             <i className="bi bi-plus-circle text-light fs-2"></i>
           </button>
         </div>
-        <div className="mt-5">
-          <Table data={users} handelDelete={handleDeleteUser} />
+        <div className="row mt-4">
+
+          <div className="col-md-6 mb-3">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Search users..."
+              value={searchTerm}
+              onChange={(e) =>
+                setSearchTerm(e.target.value)
+              }
+            />
+          </div>
+
+          <div className="col-md-3 mb-3">
+            <select
+              className="form-select"
+              value={sortField}
+              onChange={(e) =>
+                setSortField(e.target.value)
+              }
+            >
+              <option value="name">
+                Name
+              </option>
+
+              <option value="email">
+                Email
+              </option>
+
+              <option value="age">
+                Age
+              </option>
+            </select>
+          </div>
+
+          <div className="col-md-3 mb-3">
+            <select
+              className="form-select"
+              value={sortOrder}
+              onChange={(e) =>
+                setSortOrder(e.target.value)
+              }
+            >
+              <option value="asc">
+                Ascending
+              </option>
+
+              <option value="desc">
+                Descending
+              </option>
+            </select>
+          </div>
+
+        </div>
+        <div className="mt-3">
+          <Table
+            data={users}
+            handelDelete={handleDeleteUser}
+            searchTerm={searchTerm}
+            sortField={sortField}
+            sortOrder={sortOrder}
+          />
         </div>
       </div>
 
-      <UserModal onAdd={handleAddUser}/>
+      <UserModal onAdd={handleAddUser} />
     </Layout>
   );
 }

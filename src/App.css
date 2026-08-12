@@ -1,8 +1,5 @@
 /* App css  */
 
-.navbar{
-    border-bottom: 1px solid #ffffff !important;
-}
 
 .content{
     background-color: #212529;
@@ -44,4 +41,14 @@
     border: none !important;
     outline: none !important;
     box-shadow: none !important;
+}
+
+.page-item.active .page-link{
+    background-color:  #212529 !important;
+}
+
+.dashboard{
+    background-color: #76787a;
+    width: 100%;
+    min-height: fit-content;
 }

@@ -1,11 +1,15 @@
 import { useState } from "react";
+import { loginUser } from "../services/authService";
+import { useNavigate } from 'react-router-dom'; 
 
 export default function Login() {
+    const navigate = useNavigate();
 
     const [showPassword, setShowPassword] = useState(false);
+    const [errorMessage, setErrorMessage] = useState(false);
 
     const [formData, setFormData] = useState({
-        email: "",
+        username: "",
         password: ""
     });
 
@@ -18,10 +22,26 @@ export default function Login() {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
 
-        console.log(formData);
+        const username = formData.username;
+        const password = formData.password;
+
+
+        if (!username || !password) {
+            setErrorMessage(() => "Please enter both username and password.");
+            return;
+        }
+        try {
+            const data = await loginUser(username, password);
+            localStorage.setItem("accessToken", data.accessToken);
+
+            navigate("/");
+
+        } catch (error) {
+            console.error(error.message);
+        }
     };
 
     return (
@@ -50,11 +70,15 @@ export default function Login() {
                                 </p>
                             </div>
 
-                            <form onSubmit={handleSubmit}>
+                            <div className="text-center text-danger fw-bold">
+                                {errorMessage}
+                            </div>
+
+                            <form onSubmit={handleLogin}>
 
                                 <div className="mb-3">
                                     <label className="form-label fw-semibold">
-                                        Email
+                                        Username
                                     </label>
 
                                     <div className="input-group">
@@ -63,11 +87,11 @@ export default function Login() {
                                         </span>
 
                                         <input
-                                            type="email"
-                                            name="email"
+                                            type="text"
+                                            name="username"
                                             className="form-control"
-                                            placeholder="Enter your email"
-                                            value={formData.email}
+                                            placeholder="Enter your username"
+                                            value={formData.username}
                                             onChange={handleChange}
                                             required
                                         />
@@ -107,8 +131,8 @@ export default function Login() {
                                         >
                                             <i
                                                 className={`bi ${showPassword
-                                                        ? "bi-eye-slash"
-                                                        : "bi-eye"
+                                                    ? "bi-eye-slash"
+                                                    : "bi-eye"
                                                     }`}
                                             ></i>
                                         </button>

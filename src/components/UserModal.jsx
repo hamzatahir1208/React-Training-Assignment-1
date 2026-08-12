@@ -23,6 +23,7 @@ function UserModal({ onAdd }) {
 
     setFormData({
       name: "",
+      age: "",
       email: "",
       role: ""
     });
@@ -70,8 +71,21 @@ function UserModal({ onAdd }) {
                   onChange={handleChange}
                   required
                 />
-              </div>
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">
+                    Age
+                  </label>
 
+                  <input
+                    type="number"
+                    name="age"
+                    className="form-control"
+                    value={formData.age}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
               <div className="mb-3">
                 <label className="form-label">
                   Email

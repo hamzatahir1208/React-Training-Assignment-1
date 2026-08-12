@@ -1,11 +1,22 @@
+import SidebarLinks from "./SidebarLinks";
+
 export default function Sidebar() {
+  const linksData = [
+    {name : "Dashboard",
+      to : "/"
+    },
+    {name : "Services",
+      to : "/"
+    },{name : "About",
+      to : "/"
+    }
+  ]
   return (
     <>
       <div
-        className="d-none d-lg-flex flex-column bg-dark text-white p-3"
-        style={{ width: "250px", minHeight: "100vh" }}
+        className="d-none d-lg-flex flex-column bg-dark text-white p-5"
       >
-        <SidebarLinks />
+        <SidebarLinks links={linksData} />
       </div>
 
       <div
@@ -24,19 +35,9 @@ export default function Sidebar() {
           ></button>
         </div>
         <div className="offcanvas-body">
-          <SidebarLinks />
+          <SidebarLinks links={linksData} />
         </div>
       </div>
     </>
-  );
-}
-
-function SidebarLinks() {
-  return (
-    <ul className="nav flex-column">
-      <li className="nav-item"><a className="nav-link text-white" href="#">Dashboard</a></li>
-      <li className="nav-item"><a className="nav-link text-white" href="#">Reports</a></li>
-      <li className="nav-item"><a className="nav-link text-white" href="#">Settings</a></li>
-    </ul>
   );
 }
