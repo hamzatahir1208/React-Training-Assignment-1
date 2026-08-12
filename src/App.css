@@ -1,9 +1,47 @@
 /* App css  */
 
+.navbar{
+    border-bottom: 1px solid #ffffff !important;
+}
+
 .content{
-    background-color: #4b6782;
+    background-color: #212529;
     display: flex;
     justify-content: space-between;
+    align-items: center;
     border-radius: 10px;
     color: white;
+}
+
+.custom-table {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+
+.custom-table thead th {
+    background-color: #212529 ;
+    padding: 15px;
+    font-size: 16px;
+}
+
+.custom-table tbody td {
+    background-color: #474a4e ;
+    padding: 14px;
+    vertical-align: middle;
+}
+
+.custom-table tbody tr {
+    border-bottom: 1px solid #444;
+}
+.pagination{
+    color: #444 !important;
+}
+
+.page-link{
+    background-color: #474a4e !important;
+    color: #ffffff !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
 }
