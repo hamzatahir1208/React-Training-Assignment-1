@@ -60,7 +60,7 @@ export default function Dashboard() {
           <div className="col-md-6 mb-3">
             <input
               type="text"
-              className="form-control"
+              className="form-control input-feild"
               placeholder="Search users..."
               value={searchTerm}
               onChange={(e) =>
@@ -71,7 +71,7 @@ export default function Dashboard() {
 
           <div className="col-md-3 mb-3">
             <select
-              className="form-select"
+              className="form-select input-feild"
               value={sortField}
               onChange={(e) =>
                 setSortField(e.target.value)
@@ -93,7 +93,7 @@ export default function Dashboard() {
 
           <div className="col-md-3 mb-3">
             <select
-              className="form-select"
+              className="form-select input-feild"
               value={sortOrder}
               onChange={(e) =>
                 setSortOrder(e.target.value)
@@ -113,7 +113,7 @@ export default function Dashboard() {
         <div className="mt-3">
           <Table
             data={users}
-            handelDelete={handleDeleteUser}
+            handleDelete={handleDeleteUser}
             searchTerm={searchTerm}
             sortField={sortField}
             sortOrder={sortOrder}

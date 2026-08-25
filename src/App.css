@@ -1,7 +1,7 @@
 /* App css  */
 
 
-.content{
+.content {
     background-color: #212529;
     display: flex;
     justify-content: space-between;
@@ -17,13 +17,13 @@
 
 
 .custom-table thead th {
-    background-color: #212529 ;
+    background-color: #212529;
     padding: 15px;
     font-size: 16px;
 }
 
 .custom-table tbody td {
-    background-color: #474a4e ;
+    background-color: #474a4e;
     padding: 14px;
     vertical-align: middle;
 }
@@ -31,11 +31,12 @@
 .custom-table tbody tr {
     border-bottom: 1px solid #444;
 }
-.pagination{
+
+.pagination {
     color: #444 !important;
 }
 
-.page-link{
+.page-link {
     background-color: #474a4e !important;
     color: #ffffff !important;
     border: none !important;
@@ -43,12 +44,112 @@
     box-shadow: none !important;
 }
 
-.page-item.active .page-link{
-    background-color:  #212529 !important;
+.page-item.active .page-link {
+    background-color: #212529 !important;
 }
 
-.dashboard{
+.dashboard {
     background-color: #76787a;
     width: 100%;
     min-height: fit-content;
+}
+
+.input-feild {
+    background: transparent !important;
+    border-color: #212529 !important;
+    color: #ffffff !important;
+    border: 1px solid #474a4e !important;
+    transition: background-color 0.2s ease !important;
+}
+
+.input-feild::placeholder {
+    color: #ffffff !important;
+}
+
+.input-feild:focus {
+    box-shadow: none !important;
+    background-color: #212529 !important;
+    color: #fff !important;
+    border-color: #212529 !important;
+    box-shadow: none !important;
+}
+
+.input-feild:hover {
+    background-color: #212529 !important;
+    color: #fff !important;
+}
+
+#userModal .modal-content {
+  background-color: #76787a;
+  color: #fff;
+  border: 1px solid #212529;
+}
+
+#userModal .modal-header,
+#userModal .modal-footer {
+  border-color: #212529;
+}
+
+#userModal .modal-title {
+  color: #fff;
+}
+
+#userModal .form-label {
+  color: #fff;
+}
+
+#userModal .form-control,
+#userModal .form-select {
+  background-color: #474a4e;
+  color: #fff;
+  border: 1px solid #212529;
+}
+
+#userModal .form-control::placeholder {
+  color: #adb5bd;
+}
+
+#userModal .form-control:hover,
+#userModal .form-select:hover {
+  background-color: #212529;
+  color: #fff;
+}
+
+#userModal .form-control:focus,
+#userModal .form-select:focus {
+  background-color: #212529;
+  color: #fff;
+  border-color: #212529;
+  box-shadow: none;
+}
+
+#userModal .form-select option {
+  background-color: #474a4e;
+  color: #fff;
+}
+
+#userModal .btn-secondary {
+  background-color: #474a4e;
+  border-color: #212529;
+  color: #fff;
+}
+
+#userModal .btn-secondary:hover {
+  background-color: #212529;
+  border-color: #212529;
+}
+
+#userModal .btn-primary {
+  background-color: #212529;
+  border-color: #212529;
+  color: #fff;
+}
+
+#userModal .btn-primary:hover {
+  background-color: #474a4e;
+  border-color: #212529;
+}
+
+#userModal .btn-close {
+  filter: invert(1);
 }
