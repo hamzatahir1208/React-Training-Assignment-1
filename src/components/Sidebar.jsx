@@ -1,22 +1,11 @@
-import SidebarLinks from "./SidebarLinks";
+﻿import SidebarLinks from "./SidebarLinks";
+import { sidebarLinks } from "../utils/sidebarLinks";
 
 export default function Sidebar() {
-  const linksData = [
-    {name : "Dashboard",
-      to : "/"
-    },
-    {name : "Services",
-      to : "/"
-    },{name : "About",
-      to : "/"
-    }
-  ]
   return (
     <>
-      <div
-        className="d-none d-lg-flex flex-column bg-dark text-white p-5"
-      >
-        <SidebarLinks links={linksData} />
+      <div className="d-none d-lg-flex flex-column bg-dark text-white p-5">
+        <SidebarLinks links={sidebarLinks} />
       </div>
 
       <div
@@ -26,7 +15,9 @@ export default function Sidebar() {
         aria-labelledby="sidebarOffcanvasLabel"
       >
         <div className="offcanvas-header">
-          <h5 className="offcanvas-title" id="sidebarOffcanvasLabel">Menu</h5>
+          <h5 className="offcanvas-title" id="sidebarOffcanvasLabel">
+            Menu
+          </h5>
           <button
             type="button"
             className="btn-close btn-close-white"
@@ -35,7 +26,7 @@ export default function Sidebar() {
           ></button>
         </div>
         <div className="offcanvas-body">
-          <SidebarLinks links={linksData} />
+          <SidebarLinks links={sidebarLinks} />
         </div>
       </div>
     </>

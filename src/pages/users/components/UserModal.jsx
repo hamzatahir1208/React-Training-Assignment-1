@@ -1,33 +1,23 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 
-function UserModal({ onAdd }) {
+export default function UserModal({ onAdd }) {
   const [formData, setFormData] = useState({
-    name: "",
+    firstName: "",
+    lastName: "",
+    age: "",
     email: "",
-    role: ""
+    role: "",
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    setFormData((current) => ({
-      ...current,
-      [name]: value
-    }));
+    setFormData((current) => ({ ...current, [name]: value }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     onAdd(formData);
-
-    setFormData({
-      name: "",
-      age: "",
-      email: "",
-      role: ""
-    });
-
+    setFormData({ firstName: "", lastName: "", age: "", email: "", role: "" });
     document.getElementById("userModalClose").click();
   };
 
@@ -42,10 +32,7 @@ function UserModal({ onAdd }) {
         <div className="modal-content">
 
           <div className="modal-header">
-            <h5 className="modal-title">
-              Add User
-            </h5>
-
+            <h5 className="modal-title">Add User</h5>
             <button
               type="button"
               className="btn-close"
@@ -55,42 +42,45 @@ function UserModal({ onAdd }) {
           </div>
 
           <form onSubmit={handleSubmit}>
-
             <div className="modal-body">
 
               <div className="mb-3">
-                <label className="form-label">
-                  Name
-                </label>
-
+                <label className="form-label">First Name</label>
                 <input
                   type="text"
-                  name="name"
+                  name="firstName"
                   className="form-control"
-                  value={formData.name}
+                  value={formData.firstName}
                   onChange={handleChange}
                   required
                 />
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">
-                    Age
-                  </label>
-
-                  <input
-                    type="number"
-                    name="age"
-                    className="form-control"
-                    value={formData.age}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
+              </div>
               <div className="mb-3">
-                <label className="form-label">
-                  Email
-                </label>
+                <label className="form-label">Last Name</label>
+                <input
+                  type="text"
+                  name="lastName"
+                  className="form-control"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
 
+              <div className="mb-3">
+                <label className="form-label">Age</label>
+                <input
+                  type="number"
+                  name="age"
+                  className="form-control"
+                  value={formData.age}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">Email</label>
                 <input
                   type="email"
                   name="email"
@@ -102,10 +92,7 @@ function UserModal({ onAdd }) {
               </div>
 
               <div className="mb-3">
-                <label className="form-label">
-                  Role
-                </label>
-
+                <label className="form-label">Role</label>
                 <select
                   name="role"
                   className="form-select"
@@ -113,24 +100,15 @@ function UserModal({ onAdd }) {
                   onChange={handleChange}
                   required
                 >
-                  <option value="">
-                    Select Role
-                  </option>
-
-                  <option value="Admin">
-                    Admin
-                  </option>
-
-                  <option value="User">
-                    User
-                  </option>
+                  <option value="">Select Role</option>
+                  <option value="Admin">Admin</option>
+                  <option value="User">User</option>
                 </select>
               </div>
 
             </div>
 
             <div className="modal-footer">
-
               <button
                 id="userModalClose"
                 type="button"
@@ -139,16 +117,10 @@ function UserModal({ onAdd }) {
               >
                 Close
               </button>
-
-              <button
-                type="submit"
-                className="btn btn-primary"
-              >
+              <button type="submit" className="btn btn-primary">
                 Add User
               </button>
-
             </div>
-
           </form>
 
         </div>
@@ -156,5 +128,3 @@ function UserModal({ onAdd }) {
     </div>
   );
 }
-
-export default UserModal;
