@@ -7,11 +7,10 @@ export const getUsers = async (params = {}) => {
     limit = 10,
     search = "",
     sortBy = "firstName",
-    sortOrder,
     order = "asc",
   } = params;
 
-  const resolvedOrder = sortOrder || order || "asc";
+  const resolvedOrder = order;
   const skip = (page - 1) * limit;
 
   const query = new URLSearchParams();

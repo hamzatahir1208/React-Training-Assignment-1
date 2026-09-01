@@ -1,10 +1,13 @@
 ﻿import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginUser } from "../../services/authService";
-import { setToken } from "../../utils/auth";
+import { useDispatch, useSelector } from 'react-redux';
+import { loginUserRequest } from "../../redux/actions/authActions";
 
 export default function Login() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  // const { isLoading, error, isAuthenticated } = useSelector((state) => state.auth);
 
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -28,13 +31,11 @@ export default function Login() {
       setErrorMessage("Please enter both username and password.");
       return;
     }
-
     try {
-      const data = await loginUser(username, password);
-      setToken(data.accessToken);
+      await dispatch(loginUserRequest({ username, password }));
       navigate("/");
-    } catch (error) {
-      setErrorMessage(error.message);
+    } catch (err) {
+      setErrorMessage("Login failed. Please try again.");
     }
   };
 

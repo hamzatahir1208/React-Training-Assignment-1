@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { connect } from "react-redux";
+import { addUserAndRefresh } from "../../redux/actions/userActions";
 
-export default function UserModal({ onAdd, isAdding: externalIsAdding }) {
+function UserModal({ onAdd, isAdding }) {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -8,10 +10,7 @@ export default function UserModal({ onAdd, isAdding: externalIsAdding }) {
     email: "",
     role: "",
   });
-  const [localSubmitting, setLocalSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-
-  const isSubmitting = externalIsAdding || localSubmitting;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,18 +20,15 @@ export default function UserModal({ onAdd, isAdding: externalIsAdding }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage("");
-    setLocalSubmitting(true);
 
     try {
-      if (onAdd) {
-        await onAdd({
-          firstName: formData.firstName.trim(),
-          lastName: formData.lastName.trim(),
-          age: Number(formData.age),
-          email: formData.email.trim(),
-          role: formData.role,
-        });
-      }
+      await onAdd({
+        firstName: formData.firstName.trim(),
+        lastName: formData.lastName.trim(),
+        age: Number(formData.age),
+        email: formData.email.trim(),
+        role: formData.role,
+      });
       setFormData({ firstName: "", lastName: "", age: "", email: "", role: "" });
       const closeBtn = document.getElementById("userModalClose");
       if (closeBtn) {
@@ -40,8 +36,6 @@ export default function UserModal({ onAdd, isAdding: externalIsAdding }) {
       }
     } catch (err) {
       setErrorMessage(err?.message);
-    } finally {
-      setLocalSubmitting(false);
     }
   };
 
@@ -61,7 +55,7 @@ export default function UserModal({ onAdd, isAdding: externalIsAdding }) {
               className="btn-close"
               data-bs-dismiss="modal"
               aria-label="Close"
-              disabled={isSubmitting}
+              disabled={isAdding}
             />
           </div>
 
@@ -81,7 +75,7 @@ export default function UserModal({ onAdd, isAdding: externalIsAdding }) {
                   className="form-control"
                   value={formData.firstName}
                   onChange={handleChange}
-                  disabled={isSubmitting}
+                  disabled={isAdding}
                   required
                 />
               </div>
@@ -94,7 +88,7 @@ export default function UserModal({ onAdd, isAdding: externalIsAdding }) {
                   className="form-control"
                   value={formData.lastName}
                   onChange={handleChange}
-                  disabled={isSubmitting}
+                  disabled={isAdding}
                   required
                 />
               </div>
@@ -107,7 +101,7 @@ export default function UserModal({ onAdd, isAdding: externalIsAdding }) {
                   className="form-control"
                   value={formData.age}
                   onChange={handleChange}
-                  disabled={isSubmitting}
+                  disabled={isAdding}
                   min="1"
                   max="120"
                   required
@@ -122,7 +116,7 @@ export default function UserModal({ onAdd, isAdding: externalIsAdding }) {
                   className="form-control"
                   value={formData.email}
                   onChange={handleChange}
-                  disabled={isSubmitting}
+                  disabled={isAdding}
                   required
                 />
               </div>
@@ -134,7 +128,7 @@ export default function UserModal({ onAdd, isAdding: externalIsAdding }) {
                   className="form-select"
                   value={formData.role}
                   onChange={handleChange}
-                  disabled={isSubmitting}
+                  disabled={isAdding}
                   required
                 >
                   <option value="">Select Role</option>
@@ -150,16 +144,16 @@ export default function UserModal({ onAdd, isAdding: externalIsAdding }) {
                 type="button"
                 className="btn btn-secondary"
                 data-bs-dismiss="modal"
-                disabled={isSubmitting}
+                disabled={isAdding}
               >
                 Close
               </button>
               <button
                 type="submit"
                 className="btn btn-primary d-inline-flex align-items-center gap-2"
-                disabled={isSubmitting}
+                disabled={isAdding}
               >
-                {isSubmitting ? (
+                {isAdding ? (
                   <>
                     <span
                       className="spinner-border spinner-border-sm"
@@ -179,3 +173,13 @@ export default function UserModal({ onAdd, isAdding: externalIsAdding }) {
     </div>
   );
 }
+
+const mapStateToProps = (state) => ({
+  isAdding: state.users.isAdding,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  onAdd: (user) => dispatch(addUserAndRefresh(user)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(UserModal);

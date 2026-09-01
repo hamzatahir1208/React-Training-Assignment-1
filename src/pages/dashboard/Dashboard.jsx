@@ -1,10 +1,24 @@
+import { useEffect } from "react";
+import { connect } from "react-redux";
 import Layout from "../../app/Layout";
 import Table from "../../components/Table";
 import UserModal from "../users/UserModal";
-import { useUsers } from "../../hooks/useUsers";
 import { USER_COLUMNS } from "../../constants/columns";
+import {
+  fetchUsers,
+  changePage,
+  changeLimit,
+  changeSearch,
+  changeSort,
+  changeSortBy,
+  changeOrder,
+  deleteUserAndRefresh,
+  clearActionError,
+} from "../../redux/actions/userActions";
 
-export default function Dashboard() {
+const sortableColumns = USER_COLUMNS.filter((col) => col.sortable);
+
+const Dashboard = (props) => {
   const {
     users,
     total,
@@ -18,21 +32,22 @@ export default function Dashboard() {
     hasNextPage,
     loading,
     error,
-    isAdding,
     deletingId,
     actionError,
-    setActionError,
-    setPage,
-    setLimit,
-    setSearch,
-    setSort,
-    setSortBy,
-    setOrder,
-    handleAddUser,
-    handleDeleteUser,
-  } = useUsers({ limit: 10 });
+    fetchUsers,
+    changePage,
+    changeLimit,
+    changeSearch,
+    changeSort,
+    changeSortBy,
+    changeOrder,
+    deleteUserAndRefresh,
+    clearActionError,
+  } = props;
 
-  const sortableColumns = USER_COLUMNS.filter((col) => col.sortable);
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
 
   return (
     <Layout>
@@ -41,7 +56,8 @@ export default function Dashboard() {
           <div>
             <h1 className="mb-0">Dashboard</h1>
             <small className="text-secondary">
-              Total Users: {total} {total > 0 && `(Page ${page} of ${totalPages})`}
+              Total Users: {total}{" "}
+              {total > 0 && `(Page ${page} of ${totalPages})`}
             </small>
           </div>
           <button
@@ -56,12 +72,15 @@ export default function Dashboard() {
         </div>
 
         {actionError && (
-          <div className="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+          <div
+            className="alert alert-danger alert-dismissible fade show mt-3"
+            role="alert"
+          >
             {actionError}
             <button
               type="button"
               className="btn-close"
-              onClick={() => setActionError(null)}
+              onClick={() => clearActionError()}
               aria-label="Close"
             />
           </div>
@@ -74,7 +93,7 @@ export default function Dashboard() {
               className="form-control input-feild"
               placeholder="Search users..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => changeSearch(e.target.value)}
             />
           </div>
 
@@ -82,7 +101,7 @@ export default function Dashboard() {
             <select
               className="form-select input-feild"
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
+              onChange={(e) => changeSortBy(e.target.value)}
               aria-label="Select sort field"
             >
               {sortableColumns.map((col) => (
@@ -97,7 +116,7 @@ export default function Dashboard() {
             <select
               className="form-select input-feild"
               value={order}
-              onChange={(e) => setOrder(e.target.value)}
+              onChange={(e) => changeOrder(e.target.value)}
               aria-label="Select sort order"
             >
               <option value="asc">Ascending</option>
@@ -109,7 +128,7 @@ export default function Dashboard() {
             <select
               className="form-select input-feild"
               value={limit}
-              onChange={(e) => setLimit(Number(e.target.value))}
+              onChange={(e) => changeLimit(e.target.value)}
               aria-label="Select page size"
             >
               <option value={5}>5 / page</option>
@@ -121,9 +140,7 @@ export default function Dashboard() {
         </div>
 
         <div className="mt-3">
-          {error && (
-            <div className="text-center text-danger py-4">{error}</div>
-          )}
+          {error && <div className="text-center text-danger py-4">{error}</div>}
           {!error && (
             <Table
               data={users}
@@ -131,11 +148,11 @@ export default function Dashboard() {
               totalPages={totalPages}
               hasPrevPage={hasPrevPage}
               hasNextPage={hasNextPage}
-              onPageChange={setPage}
+              onPageChange={changePage}
               sortBy={sortBy}
               sortOrder={order}
-              onSort={setSort}
-              handleDelete={handleDeleteUser}
+              onSort={changeSort}
+              handleDelete={deleteUserAndRefresh}
               deletingId={deletingId}
               columns={USER_COLUMNS}
               loading={loading}
@@ -144,7 +161,45 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <UserModal onAdd={handleAddUser} isAdding={isAdding} />
+      <UserModal />
     </Layout>
   );
 }
+
+const mapStateToProps = (state) => {
+  const { users, total, page, limit, search, sortBy, order, loading, error, deletingId, actionError } =
+    state.users;
+
+  const totalPages = Math.max(1, Math.ceil(total / limit));
+
+  return {
+    users,
+    total,
+    page,
+    limit,
+    search,
+    sortBy,
+    order,
+    totalPages,
+    hasPrevPage: page > 1,
+    hasNextPage: page < totalPages,
+    loading,
+    error,
+    deletingId,
+    actionError,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => ({
+  fetchUsers: () => dispatch(fetchUsers()),
+  changePage: (page) => dispatch(changePage(page)),
+  changeLimit: (limit) => dispatch(changeLimit(limit)),
+  changeSearch: (term) => dispatch(changeSearch(term)),
+  changeSort: (field) => dispatch(changeSort(field)),
+  changeSortBy: (field) => dispatch(changeSortBy(field)),
+  changeOrder: (order) => dispatch(changeOrder(order)),
+  deleteUserAndRefresh: (id) => dispatch(deleteUserAndRefresh(id)),
+  clearActionError: () => dispatch(clearActionError()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);
