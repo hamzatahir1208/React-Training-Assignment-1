@@ -1,4 +1,4 @@
-﻿import { removeToken, getToken } from "../utils/auth";
+import { removeToken, getToken } from "../utils/auth";
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export function normaliseError(err, status = 0) {
@@ -45,7 +45,7 @@ async function request(path, opts = {}) {
     response = await fetch(`${BASE_URL}${path}`, fetchOptions);
   } catch (networkErr) {
     throw normaliseError(
-      { message: "Network error" },
+      { message: "Network error", raw: networkErr },
       0,
     );
   }

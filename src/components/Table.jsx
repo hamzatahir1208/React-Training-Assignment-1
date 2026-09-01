@@ -1,119 +1,228 @@
-﻿import { useState, useMemo } from "react";
+import { USER_COLUMNS } from "../pages/users/constants/columns";
 
-export default function Table({ data, handleDelete }) {
-  const [currentPage, setCurrentPage] = useState(1);
+export default function Table({
+  data = [],
+  handleDelete,
+  deletingId = null,
+  columns = USER_COLUMNS,
+  sortBy,
+  sortOrder = "asc",
+  onSort,
+  currentPage = 1,
+  totalPages = 1,
+  hasPrevPage = false,
+  hasNextPage = false,
+  onPageChange,
+  loading = false,
+}) {
+  const safePage = Math.min(Math.max(1, currentPage), totalPages);
 
-  const rowsPerPage = 5;
+  const handlePageClick = (page) => {
+    if (page < 1 || page > totalPages || page === safePage) return;
+    if (onPageChange) {
+      onPageChange(page);
+    }
+  };
 
-  // const processedData = useMemo(() => {
-  //   let result = [...data];
+  const onDeleteClick = (user) => {
+    const confirmed = window.confirm(
+      `Are you sure you want to delete user "${user.firstName} ${user.lastName}" (ID: ${user.id})?`
+    );
+    if (confirmed && handleDelete) {
+      handleDelete(user.id);
+    }
+  };
 
-  //   const search = searchTerm.toLowerCase();
+  // Generate page numbers with windowing for clean pagination
+  const getPageNumbers = () => {
+    if (totalPages <= 7) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
 
-  //   result = result.filter(
-  //     (item) =>
-  //       item.firstName.toLowerCase().includes(search) ||
-  //       item.lastName.toLowerCase().includes(search)
-  //   );
+    if (safePage <= 4) {
+      return [1, 2, 3, 4, 5, "...", totalPages];
+    }
 
-  //   result.sort((a, b) => {
-  //     let valueA = a[sortField];
-  //     let valueB = b[sortField];
+    if (safePage >= totalPages - 3) {
+      return [
+        1,
+        "...",
+        totalPages - 4,
+        totalPages - 3,
+        totalPages - 2,
+        totalPages - 1,
+        totalPages,
+      ];
+    }
 
-  //     if (typeof valueA === "string") {
-  //       valueA = valueA.toLowerCase();
-  //       valueB = valueB.toLowerCase();
-  //     }
-
-  //     if (valueA < valueB) return sortOrder === "asc" ? -1 : 1;
-  //     if (valueA > valueB) return sortOrder === "asc" ? 1 : -1;
-  //     return 0;
-  //   });
-
-  //   return result;
-  // }, [data, searchTerm, sortField, sortOrder]);
-
-  const totalPages = Math.max(1, Math.ceil(data.length / rowsPerPage));
-
-  const safePage = Math.min(currentPage, totalPages);
-
-  const startIndex = (safePage - 1) * rowsPerPage;
-  const currentData = data.slice(startIndex, startIndex + rowsPerPage);
-
-  const goToPage = (page) => {
-    if (page < 1 || page > totalPages) return;
-    setCurrentPage(page);
+    return [1, "...", safePage - 1, safePage, safePage + 1, "...", totalPages];
   };
 
   return (
     <>
-      <table className="table table-dark table-hover custom-table">
-        <thead>
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">First Name</th>
-            <th scope="col">Last Name</th>
-            <th scope="col">Age</th>
-            <th scope="col">Email</th>
-            <th scope="col">Role</th>
-            <th scope="col">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {currentData.length > 0 ? (
-            currentData.map((user) => (
-              <tr key={user.id}>
-                <td scope="row">{user.id}</td>
-                <td>{user.firstName}</td>
-                <td>{user.lastName}</td>
-                <td>{user.age}</td>
-                <td>{user.email}</td>
-                <td>{user.role}</td>
-                <td>
-                  <button
-                    type="button"
-                    className="btn text-light btn-small"
-                    onClick={() => handleDelete(user.id)}
+      <div className="table-responsive position-relative">
+        {loading && (
+          <div
+            className="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
+            style={{
+              backgroundColor: "rgba(33, 37, 41, 0.65)",
+              zIndex: 10,
+              borderRadius: "10px",
+            }}
+          >
+            <div className="d-flex align-items-center gap-2 text-light bg-dark px-3 py-2 rounded-3 shadow">
+              <div
+                className="spinner-border spinner-border-sm text-info"
+                role="status"
+              >
+                <span className="visually-hidden">Loading...</span>
+              </div>
+              <span>Fetching users...</span>
+            </div>
+          </div>
+        )}
+
+        <table className="table table-dark table-hover custom-table mb-0">
+          <thead>
+            <tr>
+              {columns.map((col) => {
+                const isSorted = sortBy === col.sortKey;
+                return (
+                  <th
+                    key={col.key}
+                    scope="col"
+                    style={{
+                      cursor: col.sortable ? "pointer" : "default",
+                      userSelect: "none",
+                    }}
+                    onClick={() => {
+                      if (col.sortable && onSort) {
+                        onSort(col.sortKey);
+                      }
+                    }}
                   >
-                    <i className="bi bi-x-circle"></i>
-                  </button>
+                    <span className="d-inline-flex align-items-center gap-1">
+                      {col.label}
+                      {col.sortable && (
+                        isSorted ? (
+                          sortOrder === "desc" ? (
+                            <i
+                              className="bi bi-arrow-down text-light"
+                              aria-label="sorted descending"
+                            ></i>
+                          ) : (
+                            <i
+                              className="bi bi-arrow-up text-light"
+                              aria-label="sorted ascending"
+                            ></i>
+                          )
+                        ) : (
+                          <i
+                            className="bi bi-arrow-down-up text-secondary opacity-50"
+                            style={{ fontSize: "0.85em" }}
+                            aria-label="sortable"
+                          ></i>
+                        )
+                      )}
+                    </span>
+                  </th>
+                );
+              })}
+            </tr>
+          </thead>
+          <tbody>
+            {data.length > 0 ? (
+              data.map((user) => {
+                const isRowDeleting = deletingId === user.id;
+                return (
+                  <tr key={user.id}>
+                    <td scope="row">{user.id}</td>
+                    <td>{user.firstName}</td>
+                    <td>{user.lastName}</td>
+                    <td>{user.age}</td>
+                    <td>{user.email}</td>
+                    <td>{user.role}</td>
+                    <td>
+                      <button
+                        type="button"
+                        className="btn text-light btn-small"
+                        onClick={() => onDeleteClick(user)}
+                        disabled={isRowDeleting}
+                        aria-label={`Delete ${user.firstName} ${user.lastName}`}
+                        title="Delete User"
+                      >
+                        {isRowDeleting ? (
+                          <span
+                            className="spinner-border spinner-border-sm text-danger"
+                            role="status"
+                            aria-hidden="true"
+                          />
+                        ) : (
+                          <i className="bi bi-x-circle text-danger fs-5"></i>
+                        )}
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })
+            ) : (
+              <tr>
+                <td colSpan={columns.length} className="text-center py-4">
+                  {loading ? "Loading..." : "No results found"}
                 </td>
               </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="6" className="text-center">
-                No results found
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+            )}
+          </tbody>
+        </table>
+      </div>
 
-      <ul className="pagination justify-content-center">
-        <li className={`page-item ${safePage === 1 ? "disabled" : ""}`}>
-          <button className="page-link" onClick={() => goToPage(safePage - 1)}>
-            Previous
-          </button>
-        </li>
-
-        {Array.from({ length: totalPages }, (_, index) => (
-          <li
-            key={index}
-            className={`page-item ${safePage === index + 1 ? "active" : ""}`}
-          >
-            <button className="page-link" onClick={() => goToPage(index + 1)}>
-              {index + 1}
+      {totalPages > 1 && (
+        <ul className="pagination justify-content-center mt-4">
+          <li className={`page-item ${!hasPrevPage ? "disabled" : ""}`}>
+            <button
+              className="page-link"
+              onClick={() => handlePageClick(safePage - 1)}
+              disabled={!hasPrevPage || loading}
+            >
+              Previous
             </button>
           </li>
-        ))}
 
-        <li className={`page-item ${safePage === totalPages ? "disabled" : ""}`}>
-          <button className="page-link" onClick={() => goToPage(safePage + 1)}>
-            Next
-          </button>
-        </li>
-      </ul>
+          {getPageNumbers().map((pageItem, index) => {
+            if (pageItem === "...") {
+              return (
+                <li key={`ellipsis-${index}`} className="page-item disabled">
+                  <span className="page-link">...</span>
+                </li>
+              );
+            }
+            return (
+              <li
+                key={pageItem}
+                className={`page-item ${safePage === pageItem ? "active" : ""}`}
+              >
+                <button
+                  className="page-link"
+                  onClick={() => handlePageClick(pageItem)}
+                  disabled={loading}
+                >
+                  {pageItem}
+                </button>
+              </li>
+            );
+          })}
+
+          <li className={`page-item ${!hasNextPage ? "disabled" : ""}`}>
+            <button
+              className="page-link"
+              onClick={() => handlePageClick(safePage + 1)}
+              disabled={!hasNextPage || loading}
+            >
+              Next
+            </button>
+          </li>
+        </ul>
+      )}
     </>
   );
 }

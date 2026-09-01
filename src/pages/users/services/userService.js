@@ -1,16 +1,34 @@
-﻿import apiClient from "../../../services/apiClient";
+import apiClient from "../../../services/apiClient";
 import {USERS_ENDPOINT, USERS_ADD_ENDPOINT} from "../../../utils/endpoints";
 
 export const getUsers = async (params = {}) => {
-  const { page = 1, limit = 10, search = "", sortBy = "firstName", sortOrder = "asc" } = params;
+  const {
+    page = 1,
+    limit = 10,
+    search = "",
+    sortBy = "firstName",
+    sortOrder,
+    order = "asc",
+  } = params;
+
+  const resolvedOrder = sortOrder || order || "asc";
+  const skip = (page - 1) * limit;
 
   const query = new URLSearchParams();
-  query.set("page", String(page));
   query.set("limit", String(limit));
-  query.set("sortBy", sortBy);
-  query.set("sortOrder", sortOrder);
-  if (search.trim()) query.set("search", search.trim());
-  console.log(`${USERS_ENDPOINT}?${query.toString()}`);
+  query.set("skip", String(skip));
+
+  if (sortBy) {
+    query.set("sortBy", sortBy);
+  }
+  if (resolvedOrder) {
+    query.set("order", resolvedOrder);
+  }
+
+  if (search && search.trim()) {
+    query.set("q", search.trim());
+    return apiClient.get(`${USERS_ENDPOINT}/search?${query.toString()}`);
+  }
 
   return apiClient.get(`${USERS_ENDPOINT}?${query.toString()}`);
 };
