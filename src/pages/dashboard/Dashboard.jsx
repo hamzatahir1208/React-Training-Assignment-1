@@ -1,8 +1,8 @@
-import Layout from "../../../app/Layout";
-import Table from "../../../components/Table";
-import UserModal from "../../users/components/UserModal";
-import { useUsers } from "../../users/hooks/useUsers";
-import { USER_COLUMNS } from "../../users/constants/columns";
+import Layout from "../../app/Layout";
+import Table from "../../components/Table";
+import UserModal from "../users/UserModal";
+import { useUsers } from "../../hooks/useUsers";
+import { USER_COLUMNS } from "../../constants/columns";
 
 export default function Dashboard() {
   const {

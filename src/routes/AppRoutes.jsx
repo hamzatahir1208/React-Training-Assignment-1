@@ -1,6 +1,6 @@
 ﻿import { Route, Routes } from "react-router-dom";
-import Dashboard from "../pages/dashboard/components/Dashboard";
-import Login from "../pages/auth/components/Login";
+import Dashboard from "../pages/dashboard/Dashboard";
+import Login from "../pages/auth/Login";
 import ProtectedRoute from "./ProtectedRoute";
 
 export default function AppRoutes() {

@@ -1,5 +1,5 @@
-﻿import apiClient from "../../../services/apiClient";
-import { LOGIN_ENDPOINT, REGISTER_ENDPOINT } from "../../../utils/endpoints";
+﻿import apiClient from "./apiClient";
+import { LOGIN_ENDPOINT, REGISTER_ENDPOINT } from "../utils/endpoints";
 
 export const loginUser = async (username, password) => {
   return apiClient.post(LOGIN_ENDPOINT, { username, password }, { auth: false });

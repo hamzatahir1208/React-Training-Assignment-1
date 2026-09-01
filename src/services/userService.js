@@ -1,5 +1,5 @@
-import apiClient from "../../../services/apiClient";
-import {USERS_ENDPOINT, USERS_ADD_ENDPOINT} from "../../../utils/endpoints";
+import apiClient from "./apiClient";
+import {USERS_ENDPOINT, USERS_ADD_ENDPOINT} from "../utils/endpoints";
 
 export const getUsers = async (params = {}) => {
   const {

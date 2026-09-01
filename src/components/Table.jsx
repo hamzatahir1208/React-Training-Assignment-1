@@ -1,4 +1,4 @@
-import { USER_COLUMNS } from "../pages/users/constants/columns";
+import { USER_COLUMNS } from "../constants/columns";
 
 export default function Table({
   data = [],
