@@ -1,53 +1,53 @@
 import { getUsers, addUser, deleteUser } from "../../services/userService";
-import * as types from "./actionTypes";
+import { FETCH_USERS, ADD_USER, DELETE_USER, TABLE_CONTROLS, CLEAR_ACTION_ERROR } from "../../constants";
 
-export const fetchUsersRequest = () => ({ type: types.FETCH_USERS_REQUEST });
+export const fetchUsersRequest = () => ({ type: FETCH_USERS.REQUEST });
 
 export const fetchUsersSuccess = ({ users, total }) => ({
-  type: types.FETCH_USERS_SUCCESS,
+  type: FETCH_USERS.SUCCESS,
   payload: { users, total },
 });
 
 export const fetchUsersFailure = (error) => ({
-  type: types.FETCH_USERS_FAILURE,
+  type: FETCH_USERS.FAILURE,
   error,
 });
 
-export const addUserRequest = () => ({ type: types.ADD_USER_REQUEST });
+export const addUserRequest = () => ({ type: ADD_USER.REQUEST });
 
 export const addUserSuccess = (user) => ({
-  type: types.ADD_USER_SUCCESS,
+  type: ADD_USER.SUCCESS,
   payload: user,
 });
 
 export const addUserFailure = (error) => ({
-  type: types.ADD_USER_FAILURE,
+  type: ADD_USER.FAILURE,
   error,
 });
 
 export const deleteUserRequest = (id) => ({
-  type: types.DELETE_USER_REQUEST,
+  type: DELETE_USER.REQUEST,
   payload: id,
 });
 
 export const deleteUserSuccess = (id) => ({
-  type: types.DELETE_USER_SUCCESS,
+  type: DELETE_USER.SUCCESS,
   payload: id,
 });
 
 export const deleteUserFailure = (error) => ({
-  type: types.DELETE_USER_FAILURE,
+  type: DELETE_USER.FAILURE,
   error,
 });
 
-export const setPage = (page) => ({ type: types.SET_PAGE, payload: page });
-export const setLimit = (limit) => ({ type: types.SET_LIMIT, payload: limit });
-export const setSearch = (term) => ({ type: types.SET_SEARCH, payload: term });
-export const setSortBy = (field) => ({ type: types.SET_SORT_BY, payload: field });
-export const setOrder = (order) => ({ type: types.SET_ORDER, payload: order });
-export const toggleSort = (field) => ({ type: types.TOGGLE_SORT, payload: field });
+export const setPage = (page) => ({ type: TABLE_CONTROLS.SET_PAGE, payload: page });
+export const setLimit = (limit) => ({ type: TABLE_CONTROLS.SET_LIMIT, payload: limit });
+export const setSearch = (term) => ({ type: TABLE_CONTROLS.SET_SEARCH, payload: term });
+export const setSortBy = (field) => ({ type: TABLE_CONTROLS.SET_SORT_BY, payload: field });
+export const setOrder = (order) => ({ type: TABLE_CONTROLS.SET_ORDER, payload: order });
+export const toggleSort = (field) => ({ type: TABLE_CONTROLS.TOGGLE_SORT, payload: field });
 
-export const clearActionError = () => ({ type: types.CLEAR_ACTION_ERROR });
+export const clearActionError = () => ({ type: CLEAR_ACTION_ERROR });
 
 export const fetchUsers = () => async (dispatch, getState) => {
   const { page, limit, search, sortBy, order } = getState().users;

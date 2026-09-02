@@ -63,12 +63,7 @@ export default function Table({
       <div className="table-responsive position-relative">
         {loading && (
           <div
-            className="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
-            style={{
-              backgroundColor: "rgba(33, 37, 41, 0.65)",
-              zIndex: 10,
-              borderRadius: "10px",
-            }}
+            className="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center loading-overlay"
           >
             <div className="d-flex align-items-center gap-2 text-light bg-dark px-3 py-2 rounded-3 shadow">
               <div
@@ -93,7 +88,6 @@ export default function Table({
                     scope="col"
                     style={{
                       cursor: col.sortable ? "pointer" : "default",
-                      userSelect: "none",
                     }}
                     onClick={() => {
                       if (col.sortable && onSort) {
@@ -118,8 +112,7 @@ export default function Table({
                           )
                         ) : (
                           <i
-                            className="bi bi-arrow-down-up text-secondary opacity-50"
-                            style={{ fontSize: "0.85em" }}
+                            className="bi bi-arrow-down-up text-secondary opacity-50 fs-6"
                             aria-label="sortable"
                           ></i>
                         )

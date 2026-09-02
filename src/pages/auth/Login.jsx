@@ -1,13 +1,11 @@
 ﻿import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { loginUserRequest } from "../../redux/actions/authActions";
 
 export default function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  // const { isLoading, error, isAuthenticated } = useSelector((state) => state.auth);
 
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -27,15 +25,11 @@ export default function Login() {
 
     const { username, password } = formData;
 
-    if (!username || !password) {
-      setErrorMessage("Please enter both username and password.");
-      return;
-    }
     try {
       await dispatch(loginUserRequest({ username, password }));
       navigate("/");
     } catch (err) {
-      setErrorMessage("Login failed. Please try again.");
+      setErrorMessage(err?.message);
     }
   };
 
@@ -65,7 +59,7 @@ export default function Login() {
                   <label className="form-label fw-semibold">Username</label>
                   <div className="input-group">
                     <span className="input-group-text">
-                      <i className="bi bi-envelope"></i>
+                      <i className="bi bi-person"></i>
                     </span>
                     <input
                       type="text"
@@ -74,7 +68,6 @@ export default function Login() {
                       placeholder="Enter your username"
                       value={formData.username}
                       onChange={handleChange}
-                      required
                     />
                   </div>
                 </div>
@@ -92,7 +85,6 @@ export default function Login() {
                       placeholder="Enter your password"
                       value={formData.password}
                       onChange={handleChange}
-                      required
                     />
                     <button
                       type="button"

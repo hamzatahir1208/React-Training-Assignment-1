@@ -1,10 +1,12 @@
 /* App css  */
-#root{
+#root {
   min-height: 100vh;
 }
-body{
+
+body {
   background-color: #212529;
 }
+
 .content {
   background-color: #212529;
   display: flex;
@@ -12,6 +14,12 @@ body{
   align-items: center;
   border-radius: 10px;
   color: white;
+}
+
+.loading-overlay {
+  background-color: rgba(33, 37, 41, 0.65);
+  z-index: 10;
+  border-radius: "10px";
 }
 
 .custom-table {

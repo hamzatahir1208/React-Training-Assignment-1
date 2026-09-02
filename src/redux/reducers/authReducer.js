@@ -8,7 +8,7 @@ const initialState = {
   error: null,
 };
 
-export const authReducer = (state = initialState, action) => {
+export default function authReducer (state = initialState, action) {
   switch (action.type) {
     case types.AUTH_LOGIN_REQUEST:
       return {

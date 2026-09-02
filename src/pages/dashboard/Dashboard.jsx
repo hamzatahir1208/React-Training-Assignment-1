@@ -21,33 +21,12 @@ const sortableColumns = USER_COLUMNS.filter((col) => col.sortable);
 const Dashboard = (props) => {
   const {
     users,
-    total,
-    page,
-    limit,
-    search,
-    sortBy,
-    order,
-    totalPages,
-    hasPrevPage,
-    hasNextPage,
-    loading,
-    error,
-    deletingId,
-    actionError,
-    fetchUsers,
-    changePage,
-    changeLimit,
-    changeSearch,
-    changeSort,
-    changeSortBy,
-    changeOrder,
-    deleteUserAndRefresh,
-    clearActionError,
+    actions,
   } = props;
 
   useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
+    actions.fetchUsers();
+  }, [actions.fetchUsers]);
 
   return (
     <Layout>
@@ -56,8 +35,8 @@ const Dashboard = (props) => {
           <div>
             <h1 className="mb-0">Dashboard</h1>
             <small className="text-secondary">
-              Total Users: {total}{" "}
-              {total > 0 && `(Page ${page} of ${totalPages})`}
+              Total Users: {users.total}{" "}
+              {users.total > 0 && `(Page ${users.page} of ${users.totalPages})`}
             </small>
           </div>
           <button
@@ -71,16 +50,16 @@ const Dashboard = (props) => {
           </button>
         </div>
 
-        {actionError && (
+        {users.actionError && (
           <div
             className="alert alert-danger alert-dismissible fade show mt-3"
             role="alert"
           >
-            {actionError}
+            {users.actionError}
             <button
               type="button"
               className="btn-close"
-              onClick={() => clearActionError()}
+              onClick={() => actions.clearActionError()}
               aria-label="Close"
             />
           </div>
@@ -92,16 +71,16 @@ const Dashboard = (props) => {
               type="text"
               className="form-control input-feild"
               placeholder="Search users..."
-              value={search}
-              onChange={(e) => changeSearch(e.target.value)}
+              value={users.search}
+              onChange={(e) => actions.changeSearch(e.target.value)}
             />
           </div>
 
           <div className="col-md-3 mb-3">
             <select
               className="form-select input-feild"
-              value={sortBy}
-              onChange={(e) => changeSortBy(e.target.value)}
+              value={users.sortBy}
+              onChange={(e) => actions.changeSortBy(e.target.value)}
               aria-label="Select sort field"
             >
               {sortableColumns.map((col) => (
@@ -115,8 +94,8 @@ const Dashboard = (props) => {
           <div className="col-md-2 mb-3">
             <select
               className="form-select input-feild"
-              value={order}
-              onChange={(e) => changeOrder(e.target.value)}
+              value={users.order}
+              onChange={(e) => actions.changeOrder(e.target.value)}
               aria-label="Select sort order"
             >
               <option value="asc">Ascending</option>
@@ -127,8 +106,8 @@ const Dashboard = (props) => {
           <div className="col-md-2 mb-3">
             <select
               className="form-select input-feild"
-              value={limit}
-              onChange={(e) => changeLimit(e.target.value)}
+              value={users.limit}
+              onChange={(e) => actions.changeLimit(e.target.value)}
               aria-label="Select page size"
             >
               <option value={5}>5 / page</option>
@@ -140,22 +119,22 @@ const Dashboard = (props) => {
         </div>
 
         <div className="mt-3">
-          {error && <div className="text-center text-danger py-4">{error}</div>}
-          {!error && (
+          {users.error && <div className="text-center text-danger py-4">{users.error}</div>}
+          {!users.error && (
             <Table
-              data={users}
-              currentPage={page}
-              totalPages={totalPages}
-              hasPrevPage={hasPrevPage}
-              hasNextPage={hasNextPage}
-              onPageChange={changePage}
-              sortBy={sortBy}
-              sortOrder={order}
-              onSort={changeSort}
-              handleDelete={deleteUserAndRefresh}
-              deletingId={deletingId}
+              data={users.users}
+              currentPage={users.page}
+              totalPages={users.totalPages}
+              hasPrevPage={users.hasPrevPage}
+              hasNextPage={users.hasNextPage}
+              onPageChange={actions.changePage}
+              sortBy={users.sortBy}
+              sortOrder={users.order}
+              onSort={actions.changeSort}
+              handleDelete={actions.deleteUserAndRefresh}
+              deletingId={users.deletingId}
               columns={USER_COLUMNS}
-              loading={loading}
+              loading={users.loading}
             />
           )}
         </div>
@@ -166,40 +145,27 @@ const Dashboard = (props) => {
   );
 }
 
-const mapStateToProps = (state) => {
-  const { users, total, page, limit, search, sortBy, order, loading, error, deletingId, actionError } =
-    state.users;
-
-  const totalPages = Math.max(1, Math.ceil(total / limit));
-
-  return {
-    users,
-    total,
-    page,
-    limit,
-    search,
-    sortBy,
-    order,
-    totalPages,
-    hasPrevPage: page > 1,
-    hasNextPage: page < totalPages,
-    loading,
-    error,
-    deletingId,
-    actionError,
-  };
-};
+const mapStateToProps = (state) => ({
+  users: {
+    ...state.users,
+    totalPages: Math.max(1, Math.ceil(state.users.total / state.users.limit)),
+    hasPrevPage: state.users.page > 1,
+    hasNextPage: state.users.page < Math.max(1, Math.ceil(state.users.total / state.users.limit)),
+  },
+});
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchUsers: () => dispatch(fetchUsers()),
-  changePage: (page) => dispatch(changePage(page)),
-  changeLimit: (limit) => dispatch(changeLimit(limit)),
-  changeSearch: (term) => dispatch(changeSearch(term)),
-  changeSort: (field) => dispatch(changeSort(field)),
-  changeSortBy: (field) => dispatch(changeSortBy(field)),
-  changeOrder: (order) => dispatch(changeOrder(order)),
-  deleteUserAndRefresh: (id) => dispatch(deleteUserAndRefresh(id)),
-  clearActionError: () => dispatch(clearActionError()),
+  actions: {
+    fetchUsers: () => dispatch(fetchUsers()),
+    changePage: (page) => dispatch(changePage(page)),
+    changeLimit: (limit) => dispatch(changeLimit(limit)),
+    changeSearch: (term) => dispatch(changeSearch(term)),
+    changeSort: (field) => dispatch(changeSort(field)),
+    changeSortBy: (field) => dispatch(changeSortBy(field)),
+    changeOrder: (order) => dispatch(changeOrder(order)),
+    deleteUserAndRefresh: (id) => dispatch(deleteUserAndRefresh(id)),
+    clearActionError: () => dispatch(clearActionError()),
+  },
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);

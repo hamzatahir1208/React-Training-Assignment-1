@@ -1,22 +1,25 @@
 import { loginUser } from "../../services/authService";
-import * as types from "./actionTypes";
+import { AUTH } from "../../constants";
 import { setToken, removeToken } from "../../utils/auth";
 
 export const authLoginRequest = () => ({
-  type: types.AUTH_LOGIN_REQUEST,
+  type: AUTH.LOGIN_REQUEST,
 });
 
 export const authLoginSuccess = (user, accessToken) => {
   setToken(accessToken);
 
   return {
-    type: types.AUTH_LOGIN_SUCCESS,
-    payload: user,
+    type: AUTH.LOGIN_SUCCESS,
+    payload: {
+      user,
+      token: accessToken,
+    },
   };
 };
 
 export const authLoginFailure = (error) => ({
-  type: types.AUTH_LOGIN_FAILURE,
+  type: AUTH.LOGIN_FAILURE,
   error,
 });
 
@@ -24,7 +27,7 @@ export const authLogout = () => {
   removeToken();
 
   return {
-    type: types.AUTH_LOGOUT,
+    type: AUTH.LOGOUT,
   };
 };
 
@@ -38,11 +41,11 @@ export const loginUserRequest = (credentials) => {
         credentials.password
       );
 
-      const { user, accessToken } = data;
+      const { accessToken, ...user } = data;
 
       dispatch(authLoginSuccess(user, accessToken));
     } catch (err) {
-      dispatch(authLoginFailure(err?.message || "Login failed"));
+      dispatch(authLoginFailure(err?.message));
       throw err;
     }
   };
