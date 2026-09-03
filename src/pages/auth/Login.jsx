@@ -26,7 +26,7 @@ export default function Login() {
     const { username, password } = formData;
 
     try {
-      await dispatch(loginUserRequest({ username, password }));
+      dispatch(loginUserRequest({ username, password }));
       navigate("/");
     } catch (err) {
       setErrorMessage(err?.message);

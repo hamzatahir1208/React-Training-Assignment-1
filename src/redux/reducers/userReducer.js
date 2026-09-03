@@ -1,4 +1,4 @@
-import * as types from "../actions/actionTypes";
+import { FETCH_USERS, ADD_USER, DELETE_USER, TABLE_CONTROLS, CLEAR_ACTION_ERROR } from "../../constants";
 
 const initialState = {
   users: [],
@@ -20,10 +20,10 @@ const initialState = {
 
 export default function userReducer(state = initialState, action) {
   switch (action.type) {
-    case types.FETCH_USERS_REQUEST:
+    case FETCH_USERS.REQUEST:
       return { ...state, loading: true, error: null };
 
-    case types.FETCH_USERS_SUCCESS:
+    case FETCH_USERS.SUCCESS:
       return {
         ...state,
         loading: false,
@@ -31,13 +31,13 @@ export default function userReducer(state = initialState, action) {
         total: action.payload.total,
       };
 
-    case types.FETCH_USERS_FAILURE:
+    case FETCH_USERS.FAILURE:
       return { ...state, loading: false, error: action.error };
 
-    case types.ADD_USER_REQUEST:
+    case ADD_USER.REQUEST:
       return { ...state, isAdding: true, actionError: null };
 
-    case types.ADD_USER_SUCCESS:
+    case ADD_USER.SUCCESS:
       return {
         ...state,
         isAdding: false,
@@ -45,13 +45,13 @@ export default function userReducer(state = initialState, action) {
         total: state.total + 1,
       };
 
-    case types.ADD_USER_FAILURE:
+    case ADD_USER.FAILURE:
       return { ...state, isAdding: false, actionError: action.error };
 
-    case types.DELETE_USER_REQUEST:
+    case DELETE_USER.REQUEST:
       return { ...state, deletingId: action.payload, actionError: null };
 
-    case types.DELETE_USER_SUCCESS:
+    case DELETE_USER.SUCCESS:
       return {
         ...state,
         deletingId: null,
@@ -59,25 +59,25 @@ export default function userReducer(state = initialState, action) {
         total: Math.max(0, state.total - 1),
       };
 
-    case types.DELETE_USER_FAILURE:
+    case DELETE_USER.FAILURE:
       return { ...state, deletingId: null, actionError: action.error };
 
-    case types.SET_PAGE:
+    case TABLE_CONTROLS.SET_PAGE:
       return { ...state, page: Math.max(1, action.payload) };
 
-    case types.SET_LIMIT:
+    case TABLE_CONTROLS.SET_LIMIT:
       return { ...state, limit: action.payload, page: 1 };
 
-    case types.SET_SEARCH:
+    case TABLE_CONTROLS.SET_SEARCH:
       return { ...state, search: action.payload, page: 1 };
 
-    case types.SET_SORT_BY:
+    case TABLE_CONTROLS.SET_SORT_BY:
       return { ...state, sortBy: action.payload, page: 1 };
 
-    case types.SET_ORDER:
+    case TABLE_CONTROLS.SET_ORDER:
       return { ...state, order: action.payload, page: 1 };
 
-    case types.TOGGLE_SORT: {
+    case TABLE_CONTROLS.TOGGLE_SORT: {
       const field = action.payload;
       if (state.sortBy === field) {
         return {
@@ -89,7 +89,7 @@ export default function userReducer(state = initialState, action) {
       return { ...state, sortBy: field, order: "asc", page: 1 };
     }
 
-    case types.CLEAR_ACTION_ERROR:
+    case CLEAR_ACTION_ERROR:
       return { ...state, actionError: null };
 
     default:

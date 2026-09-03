@@ -1,4 +1,4 @@
-﻿import { Link, useNavigate } from "react-router-dom";
+﻿import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { authLogout } from "../redux/actions/authActions";
 import { getToken } from "../utils/auth";
@@ -6,12 +6,10 @@ import { getToken } from "../utils/auth";
 const token = getToken();
 
 export default function Topbar() {
-  const navigate = useNavigate();
-   const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
   const handleLogout = () => {
     dispatch(authLogout());
-    navigate("/login");
   };
 
   return (

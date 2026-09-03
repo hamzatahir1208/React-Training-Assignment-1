@@ -23,6 +23,9 @@ const Dashboard = (props) => {
     users,
     actions,
   } = props;
+  const totalPages = Math.max(1, Math.ceil(users.total / users.limit));
+  const hasPrevPage = users.page > 1;
+  const hasNextPage = users.page < totalPages;
 
   useEffect(() => {
     actions.fetchUsers();
@@ -124,9 +127,9 @@ const Dashboard = (props) => {
             <Table
               data={users.users}
               currentPage={users.page}
-              totalPages={users.totalPages}
-              hasPrevPage={users.hasPrevPage}
-              hasNextPage={users.hasNextPage}
+              totalPages={totalPages}
+              hasPrevPage={hasPrevPage}
+              hasNextPage={hasNextPage}
               onPageChange={actions.changePage}
               sortBy={users.sortBy}
               sortOrder={users.order}
@@ -148,9 +151,6 @@ const Dashboard = (props) => {
 const mapStateToProps = (state) => ({
   users: {
     ...state.users,
-    totalPages: Math.max(1, Math.ceil(state.users.total / state.users.limit)),
-    hasPrevPage: state.users.page > 1,
-    hasNextPage: state.users.page < Math.max(1, Math.ceil(state.users.total / state.users.limit)),
   },
 });
 

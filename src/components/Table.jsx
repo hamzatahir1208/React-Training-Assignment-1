@@ -72,7 +72,7 @@ export default function Table({
               >
                 <span className="visually-hidden">Loading...</span>
               </div>
-              <span>Fetching users...</span>
+              <span>Loading ...</span>
             </div>
           </div>
         )}
