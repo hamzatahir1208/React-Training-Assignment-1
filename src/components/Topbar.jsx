@@ -1,15 +1,11 @@
-﻿import { Link } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
+import { connect } from "react-redux";
 import { authLogout } from "../redux/actions/authActions";
 import { getToken } from "../utils/auth";
 
-const token = getToken();
-
-export default function Topbar() {
-  const dispatch = useDispatch();
-
+function Topbar({ authLogout, isAuthenticated }) {
   const handleLogout = () => {
-    dispatch(authLogout());
+    authLogout();
   };
 
   return (
@@ -32,7 +28,7 @@ export default function Topbar() {
         <div className="d-flex align-items-center ms-auto ms-lg-0 me-3">
           <ul className="navbar-nav flex-row align-items-center me-3">
             <li className="nav-item">
-              {token ? (
+              {isAuthenticated ? (
                 <a
                   onClick={handleLogout}
                   className="nav-link active text-light"
@@ -57,3 +53,13 @@ export default function Topbar() {
     </nav>
   );
 }
+
+const mapStateToProps = (state) => ({
+  isAuthenticated: state.auth.isAuthenticated,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  authLogout: () => dispatch(authLogout())
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Topbar);

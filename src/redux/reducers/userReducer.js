@@ -1,7 +1,7 @@
 import { FETCH_USERS, ADD_USER, DELETE_USER, TABLE_CONTROLS, CLEAR_ACTION_ERROR } from "../../constants";
 
 const initialState = {
-  users: [],
+  data: [],
   total: 0,
 
   page: 1,
@@ -27,7 +27,7 @@ export default function userReducer(state = initialState, action) {
       return {
         ...state,
         loading: false,
-        users: action.payload.users,
+        data: action.payload.users,
         total: action.payload.total,
       };
 
@@ -41,7 +41,7 @@ export default function userReducer(state = initialState, action) {
       return {
         ...state,
         isAdding: false,
-        users: [action.payload, ...state.users],
+        data: [action.payload, ...state.data],
         total: state.total + 1,
       };
 
@@ -55,7 +55,7 @@ export default function userReducer(state = initialState, action) {
       return {
         ...state,
         deletingId: null,
-        users: state.users.filter((u) => u.id !== action.payload),
+        data: state.data.filter((u) => u.id !== action.payload),
         total: Math.max(0, state.total - 1),
       };
 

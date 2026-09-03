@@ -1,4 +1,5 @@
 import { getUsers, addUser, deleteUser } from "../../services/userService";
+import { startLoading, stopLoading } from "./loadingActions";
 import { FETCH_USERS, ADD_USER, DELETE_USER, TABLE_CONTROLS, CLEAR_ACTION_ERROR } from "../../constants";
 
 export const fetchUsersRequest = () => ({ type: FETCH_USERS.REQUEST });
@@ -73,6 +74,7 @@ export const fetchUsers = () => async (dispatch, getState) => {
 
 export const addUserAndRefresh = (newUser) => async (dispatch) => {
   dispatch(addUserRequest());
+  dispatch(startLoading("ADD_USER"));
   try {
     const createdUser = await addUser(newUser);
     dispatch(addUserSuccess(createdUser));
@@ -80,6 +82,8 @@ export const addUserAndRefresh = (newUser) => async (dispatch) => {
   } catch (err) {
     dispatch(addUserFailure(err?.message));
     throw err;
+  } finally {
+    dispatch(stopLoading("ADD_USER"));
   }
 };
 

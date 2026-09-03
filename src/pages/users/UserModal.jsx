@@ -1,17 +1,16 @@
 import { useState } from "react";
-import { connect } from "react-redux";
-import { addUserAndRefresh } from "../../redux/actions/userActions";
 
-function UserModal({ onAdd, isAdding }) {
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    age: "",
-    email: "",
-    role: "",
-  });
-  const [errorMessage, setErrorMessage] = useState("");
+const initialFormData = {
+  firstName: "",
+  lastName: "",
+  age: "",
+  email: "",
+  role: "",
+};
 
+export default function UserModal({ onSubmit, isAdding, error, setError }) {
+  const [formData, setFormData] = useState(initialFormData);
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((current) => ({ ...current, [name]: value }));
@@ -19,23 +18,23 @@ function UserModal({ onAdd, isAdding }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrorMessage("");
+    setError("");
 
     try {
-      await onAdd({
+      await onSubmit({
         firstName: formData.firstName.trim(),
         lastName: formData.lastName.trim(),
         age: Number(formData.age),
         email: formData.email.trim(),
         role: formData.role,
       });
-      setFormData({ firstName: "", lastName: "", age: "", email: "", role: "" });
+      setFormData(initialFormData);
       const closeBtn = document.getElementById("userModalClose");
       if (closeBtn) {
         closeBtn.click();
       }
     } catch (err) {
-      setErrorMessage(err?.message);
+      setError(err?.message);
     }
   };
 
@@ -61,9 +60,9 @@ function UserModal({ onAdd, isAdding }) {
 
           <form onSubmit={handleSubmit}>
             <div className="modal-body">
-              {errorMessage && (
+              {error && (
                 <div className="alert alert-danger py-2 mb-3" role="alert">
-                  {errorMessage}
+                  {error}
                 </div>
               )}
 
@@ -174,12 +173,3 @@ function UserModal({ onAdd, isAdding }) {
   );
 }
 
-const mapStateToProps = (state) => ({
-  isAdding: state.users.isAdding,
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  onAdd: (user) => dispatch(addUserAndRefresh(user)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(UserModal);

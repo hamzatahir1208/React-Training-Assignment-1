@@ -1,11 +1,10 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from 'react-redux';
+import { connect } from 'react-redux';
 import { loginUserRequest } from "../../redux/actions/authActions";
 
-export default function Login() {
+function Login({ loginUserRequest }) {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -26,7 +25,7 @@ export default function Login() {
     const { username, password } = formData;
 
     try {
-      dispatch(loginUserRequest({ username, password }));
+      await loginUserRequest({ username, password });
       navigate("/");
     } catch (err) {
       setErrorMessage(err?.message);
@@ -121,3 +120,9 @@ export default function Login() {
     </div>
   );
 }
+
+const mapDispatchToProps = (dispatch) => ({ 
+  loginUserRequest: (data) => dispatch(loginUserRequest(data)) 
+});
+
+export default connect(null, mapDispatchToProps)(Login);
