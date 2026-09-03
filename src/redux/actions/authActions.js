@@ -1,52 +1,28 @@
 import { loginUser } from "../../services/authService";
-import { AUTH } from "../../constants";
+import { AUTH, LOADING } from "../../constants";
 import { setToken, removeToken } from "../../utils/auth";
-
-export const authLoginRequest = () => ({
-  type: AUTH.LOGIN_REQUEST,
-});
-
-export const authLoginSuccess = (user, accessToken) => {
-  setToken(accessToken);
-
-  return {
-    type: AUTH.LOGIN_SUCCESS,
-    payload: {
-      user,
-      token: accessToken,
-    },
-  };
-};
-
-export const authLoginFailure = (error) => ({
-  type: AUTH.LOGIN_FAILURE,
-  error,
-});
+import { action } from "./actions";
 
 export const authLogout = () => {
   removeToken();
-
-  return {
-    type: AUTH.LOGOUT,
-  };
+  return action(AUTH.LOGOUT);
 };
 
 export const loginUserRequest = (credentials) => {
   return async (dispatch) => {
-    dispatch(authLoginRequest());
+    dispatch(action(LOADING.START, AUTH.LOGIN_REQUEST));
 
     try {
-      const data = await loginUser(
-        credentials.username,
-        credentials.password
-      );
-
+      const data = await loginUser(credentials.username, credentials.password);
       const { accessToken, ...user } = data;
+      setToken(accessToken);
 
-      dispatch(authLoginSuccess(user, accessToken));
+      dispatch( action(AUTH.LOGIN_SUCCESS, { user }));
     } catch (err) {
-      dispatch(authLoginFailure(err?.message));
+      dispatch(action(AUTH.LOGIN_FAILURE, err?.message));
       throw err;
+    } finally {
+      dispatch(action(LOADING.STOP, AUTH.LOGIN_REQUEST));
     }
   };
 };

@@ -6,7 +6,7 @@ export const getUsers = async (params = {}) => {
     page = 1,
     limit = 10,
     search = "",
-    sortBy = "firstName",
+    sortBy = "id",
     order = "asc",
   } = params;
 

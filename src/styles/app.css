@@ -19,24 +19,27 @@ body {
 .loading-overlay {
   background-color: rgba(33, 37, 41, 0.65);
   z-index: 10;
-  border-radius: "10px";
+  border-radius: 10px;
 }
 
 .custom-table {
   border-radius: 10px;
   overflow: hidden;
+  min-height: 500px;
 }
 
 .custom-table thead th {
   background-color: #212529;
   padding: 15px;
   font-size: 16px;
+  color: #ffffff;
 }
 
 .custom-table tbody td {
   background-color: #474a4e;
   padding: 14px;
   vertical-align: middle;
+  color: #ffffff;
 }
 
 .custom-table tbody tr {
@@ -163,4 +166,14 @@ body {
 
 #userModal .btn-close {
   filter: invert(1);
+}
+.cursor-pointer {
+  cursor: pointer !important;
+}
+.cursor-default {
+  cursor: default !important;
+}
+
+.table-loading{
+  min-height: 500px;
 }

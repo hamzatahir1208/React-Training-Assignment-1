@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Modal, Form, Button, Alert, Spinner } from "react-bootstrap";
 
 const initialFormData = {
   firstName: "",
@@ -8,12 +9,19 @@ const initialFormData = {
   role: "",
 };
 
-export default function UserModal({ onSubmit, isAdding, error, setError }) {
+export default function UserModal({ show, onHide, onSubmit, isAdding, error, setError }) {
   const [formData, setFormData] = useState(initialFormData);
-  
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((current) => ({ ...current, [name]: value }));
+  };
+
+  const handleClose = () => {
+    if (isAdding) return;
+    setFormData(initialFormData);
+    setError("");
+    onHide();
   };
 
   const handleSubmit = async (e) => {
@@ -29,147 +37,113 @@ export default function UserModal({ onSubmit, isAdding, error, setError }) {
         role: formData.role,
       });
       setFormData(initialFormData);
-      const closeBtn = document.getElementById("userModalClose");
-      if (closeBtn) {
-        closeBtn.click();
-      }
+      onHide();
     } catch (err) {
       setError(err?.message);
     }
   };
 
   return (
-    <div
-      className="modal fade"
-      id="userModal"
-      tabIndex="-1"
-      aria-hidden="true"
-    >
-      <div className="modal-dialog">
-        <div className="modal-content">
-          <div className="modal-header">
-            <h5 className="modal-title">Add User</h5>
-            <button
-              type="button"
-              className="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
+    <Modal show={show} onHide={handleClose} centered backdrop={isAdding ? "static" : true}>
+      <Form onSubmit={handleSubmit}>
+        <Modal.Header closeButton={!isAdding}>
+          <Modal.Title>Add User</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          {error && (
+            <Alert variant="danger" className="py-2">
+              {error}
+            </Alert>
+          )}
+
+          <Form.Group className="mb-3" controlId="userFirstName">
+            <Form.Label>First Name</Form.Label>
+            <Form.Control
+              type="text"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleChange}
               disabled={isAdding}
+              required
             />
-          </div>
+          </Form.Group>
 
-          <form onSubmit={handleSubmit}>
-            <div className="modal-body">
-              {error && (
-                <div className="alert alert-danger py-2 mb-3" role="alert">
-                  {error}
-                </div>
-              )}
+          <Form.Group className="mb-3" controlId="userLastName">
+            <Form.Label>Last Name</Form.Label>
+            <Form.Control
+              type="text"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleChange}
+              disabled={isAdding}
+              required
+            />
+          </Form.Group>
 
-              <div className="mb-3">
-                <label className="form-label">First Name</label>
-                <input
-                  type="text"
-                  name="firstName"
-                  className="form-control"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  disabled={isAdding}
-                  required
-                />
-              </div>
+          <Form.Group className="mb-3" controlId="userAge">
+            <Form.Label>Age</Form.Label>
+            <Form.Control
+              type="number"
+              name="age"
+              value={formData.age}
+              onChange={handleChange}
+              disabled={isAdding}
+              min="1"
+              max="120"
+              required
+            />
+          </Form.Group>
 
-              <div className="mb-3">
-                <label className="form-label">Last Name</label>
-                <input
-                  type="text"
-                  name="lastName"
-                  className="form-control"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  disabled={isAdding}
-                  required
-                />
-              </div>
+          <Form.Group className="mb-3" controlId="userEmail">
+            <Form.Label>Email</Form.Label>
+            <Form.Control
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              disabled={isAdding}
+              required
+            />
+          </Form.Group>
 
-              <div className="mb-3">
-                <label className="form-label">Age</label>
-                <input
-                  type="number"
-                  name="age"
-                  className="form-control"
-                  value={formData.age}
-                  onChange={handleChange}
-                  disabled={isAdding}
-                  min="1"
-                  max="120"
-                  required
-                />
-              </div>
+          <Form.Group className="mb-3" controlId="userRole">
+            <Form.Label>Role</Form.Label>
+            <Form.Select
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              disabled={isAdding}
+              required
+            >
+              <option value="">Select Role</option>
+              <option value="Admin">Admin</option>
+              <option value="User">User</option>
+            </Form.Select>
+          </Form.Group>
+        </Modal.Body>
 
-              <div className="mb-3">
-                <label className="form-label">Email</label>
-                <input
-                  type="email"
-                  name="email"
-                  className="form-control"
-                  value={formData.email}
-                  onChange={handleChange}
-                  disabled={isAdding}
-                  required
-                />
-              </div>
-
-              <div className="mb-3">
-                <label className="form-label">Role</label>
-                <select
-                  name="role"
-                  className="form-select"
-                  value={formData.role}
-                  onChange={handleChange}
-                  disabled={isAdding}
-                  required
-                >
-                  <option value="">Select Role</option>
-                  <option value="Admin">Admin</option>
-                  <option value="User">User</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="modal-footer">
-              <button
-                id="userModalClose"
-                type="button"
-                className="btn btn-secondary"
-                data-bs-dismiss="modal"
-                disabled={isAdding}
-              >
-                Close
-              </button>
-              <button
-                type="submit"
-                className="btn btn-primary d-inline-flex align-items-center gap-2"
-                disabled={isAdding}
-              >
-                {isAdding ? (
-                  <>
-                    <span
-                      className="spinner-border spinner-border-sm"
-                      role="status"
-                      aria-hidden="true"
-                    />
-                    <span>Adding...</span>
-                  </>
-                ) : (
-                  "Add User"
-                )}
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose} disabled={isAdding}>
+            Close
+          </Button>
+          <Button
+            type="submit"
+            variant="primary"
+            disabled={isAdding}
+            className="d-inline-flex align-items-center gap-2"
+          >
+            {isAdding ? (
+              <>
+                <Spinner animation="border" size="sm" role="status" aria-hidden="true" />
+                <span>Adding...</span>
+              </>
+            ) : (
+              "Add User"
+            )}
+          </Button>
+        </Modal.Footer>
+      </Form>
+    </Modal>
   );
 }
-

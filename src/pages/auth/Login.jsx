@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { connect } from 'react-redux';
+import { connect } from "react-redux";
+import { Container, Row, Col, Card, Form, InputGroup, Button, Alert, Spinner } from "react-bootstrap";
 import { loginUserRequest } from "../../redux/actions/authActions";
+import { createLoadingSelector } from "../../redux/reducers/loadingReducer";
+import { AUTH } from "../../constants";
 
-function Login({ loginUserRequest }) {
+function Login({ loginUserRequest, isLoggingIn }) {
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -21,6 +24,7 @@ function Login({ loginUserRequest }) {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setErrorMessage("");
 
     const { username, password } = formData;
 
@@ -33,12 +37,11 @@ function Login({ loginUserRequest }) {
   };
 
   return (
-    <div className="container-fluid bg-light">
-      <div className="row min-vh-100 justify-content-center align-items-center">
-        <div className="col-11 col-sm-8 col-md-6 col-lg-4">
-          <div className="card shadow border-0 rounded-4">
-            <div className="card-body p-4 p-md-5">
-
+    <Container fluid className="bg-light">
+      <Row className="min-vh-100 justify-content-center align-items-center">
+        <Col xs={11} sm={8} md={6} lg={4}>
+          <Card className="shadow border-0 rounded-4">
+            <Card.Body className="p-4 p-md-5">
               <div className="text-center mb-4">
                 <div className="d-inline-flex align-items-center justify-content-center p-3">
                   <i className="bi bi-person-fill fs-3 text-dark"></i>
@@ -48,81 +51,93 @@ function Login({ loginUserRequest }) {
               </div>
 
               {errorMessage && (
-                <div className="text-center text-danger fw-bold mb-2">
+                <Alert variant="danger" className="text-center fw-bold py-2">
                   {errorMessage}
-                </div>
+                </Alert>
               )}
 
-              <form onSubmit={handleLogin}>
-                <div className="mb-3">
-                  <label className="form-label fw-semibold">Username</label>
-                  <div className="input-group">
-                    <span className="input-group-text">
+              <Form onSubmit={handleLogin}>
+                <Form.Group className="mb-3" controlId="loginUsername">
+                  <Form.Label className="fw-semibold">Username</Form.Label>
+                  <InputGroup>
+                    <InputGroup.Text>
                       <i className="bi bi-person"></i>
-                    </span>
-                    <input
+                    </InputGroup.Text>
+                    <Form.Control
                       type="text"
                       name="username"
-                      className="form-control"
                       placeholder="Enter your username"
                       value={formData.username}
                       onChange={handleChange}
+                      disabled={isLoggingIn}
                     />
-                  </div>
-                </div>
+                  </InputGroup>
+                </Form.Group>
 
-                <div className="mb-3">
-                  <label className="form-label fw-semibold">Password</label>
-                  <div className="input-group">
-                    <span className="input-group-text">
+                <Form.Group className="mb-3" controlId="loginPassword">
+                  <Form.Label className="fw-semibold">Password</Form.Label>
+                  <InputGroup>
+                    <InputGroup.Text>
                       <i className="bi bi-lock"></i>
-                    </span>
-                    <input
+                    </InputGroup.Text>
+                    <Form.Control
                       type={showPassword ? "text" : "password"}
                       name="password"
-                      className="form-control"
                       placeholder="Enter your password"
                       value={formData.password}
                       onChange={handleChange}
+                      disabled={isLoggingIn}
                     />
-                    <button
+                    <Button
                       type="button"
-                      className="btn btn-outline-secondary"
-                      onClick={() => setShowPassword(!showPassword)}
+                      variant="outline-secondary"
+                      onClick={() => setShowPassword((prev) => !prev)}
+                      disabled={isLoggingIn}
                     >
                       <i className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"}`}></i>
-                    </button>
-                  </div>
-                </div>
+                    </Button>
+                  </InputGroup>
+                </Form.Group>
 
-                <button
+                <Button
                   type="submit"
-                  className="btn btn-primary w-100 py-2 mt-4"
+                  variant="primary"
+                  className="w-100 py-2 mt-4 d-inline-flex align-items-center justify-content-center gap-2"
+                  disabled={isLoggingIn}
                 >
-                  Login
-                </button>
-              </form>
+                  {isLoggingIn ? (
+                    <>
+                      <Spinner animation="border" size="sm" role="status" aria-hidden="true" />
+                      <span>Logging in...</span>
+                    </>
+                  ) : (
+                    "Login"
+                  )}
+                </Button>
+              </Form>
 
               <div className="text-center mt-4">
                 <span className="text-dark">{"Don't have an account?"}</span>
-                <a
-                  href="#"
-                  className="text-primary text-decoration-none ms-1"
-                >
+                <a href="#" className="text-primary text-decoration-none ms-1">
                   Create Account
                 </a>
               </div>
-
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+    </Container>
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({ 
-  loginUserRequest: (data) => dispatch(loginUserRequest(data)) 
+const loadingSelector = createLoadingSelector(AUTH.LOGIN_REQUEST);
+
+const mapStateToProps = (state) => ({
+  isLoggingIn: loadingSelector(state),
 });
 
-export default connect(null, mapDispatchToProps)(Login);
+const mapDispatchToProps = (dispatch) => ({
+  loginUserRequest: (data) => dispatch(loginUserRequest(data)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

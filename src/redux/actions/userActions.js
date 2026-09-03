@@ -1,132 +1,88 @@
 import { getUsers, addUser, deleteUser } from "../../services/userService";
-import { startLoading, stopLoading } from "./loadingActions";
-import { FETCH_USERS, ADD_USER, DELETE_USER, TABLE_CONTROLS, CLEAR_ACTION_ERROR } from "../../constants";
+import { action } from "./actions";
+import { FETCH_USERS, ADD_USER, DELETE_USER, TABLE_CONTROLS, LOADING, LOADING_TYPES } from "../../constants";
+//search feild not in redux
+export const fetchUsers = ({ page, limit, search, sortBy, order }) => async (dispatch, getState) => {
+  // const { page, limit, search, sortBy, order } = getState().users;
 
-export const fetchUsersRequest = () => ({ type: FETCH_USERS.REQUEST });
-
-export const fetchUsersSuccess = ({ users, total }) => ({
-  type: FETCH_USERS.SUCCESS,
-  payload: { users, total },
-});
-
-export const fetchUsersFailure = (error) => ({
-  type: FETCH_USERS.FAILURE,
-  error,
-});
-
-export const addUserRequest = () => ({ type: ADD_USER.REQUEST });
-
-export const addUserSuccess = (user) => ({
-  type: ADD_USER.SUCCESS,
-  payload: user,
-});
-
-export const addUserFailure = (error) => ({
-  type: ADD_USER.FAILURE,
-  error,
-});
-
-export const deleteUserRequest = (id) => ({
-  type: DELETE_USER.REQUEST,
-  payload: id,
-});
-
-export const deleteUserSuccess = (id) => ({
-  type: DELETE_USER.SUCCESS,
-  payload: id,
-});
-
-export const deleteUserFailure = (error) => ({
-  type: DELETE_USER.FAILURE,
-  error,
-});
-
-export const setPage = (page) => ({ type: TABLE_CONTROLS.SET_PAGE, payload: page });
-export const setLimit = (limit) => ({ type: TABLE_CONTROLS.SET_LIMIT, payload: limit });
-export const setSearch = (term) => ({ type: TABLE_CONTROLS.SET_SEARCH, payload: term });
-export const setSortBy = (field) => ({ type: TABLE_CONTROLS.SET_SORT_BY, payload: field });
-export const setOrder = (order) => ({ type: TABLE_CONTROLS.SET_ORDER, payload: order });
-export const toggleSort = (field) => ({ type: TABLE_CONTROLS.TOGGLE_SORT, payload: field });
-
-export const clearActionError = () => ({ type: CLEAR_ACTION_ERROR });
-
-export const fetchUsers = () => async (dispatch, getState) => {
-  const { page, limit, search, sortBy, order } = getState().users;
-
-  dispatch(fetchUsersRequest());
+  dispatch(action(LOADING.START, LOADING_TYPES.FETCH_USERS));
   try {
     const result = await getUsers({ page, limit, search, sortBy, order });
 
     if (Array.isArray(result)) {
-      dispatch(fetchUsersSuccess({ users: result, total: result.length }));
+      dispatch(action(FETCH_USERS.SUCCESS, { users: result, total: result.length }));
     } else {
       dispatch(
-        fetchUsersSuccess({
+        action(FETCH_USERS.SUCCESS, {
           users: result?.users ?? [],
           total: result?.total ?? 0,
         })
       );
     }
   } catch (err) {
-    dispatch(fetchUsersFailure(err.message ?? "Failed to load users."));
+    dispatch(action(FETCH_USERS.FAILURE, err.message ));
+  } finally {
+    dispatch(action(LOADING.STOP, LOADING_TYPES.FETCH_USERS));
   }
 };
 
 export const addUserAndRefresh = (newUser) => async (dispatch) => {
-  dispatch(addUserRequest());
-  dispatch(startLoading("ADD_USER"));
+  dispatch(action(LOADING.START, LOADING_TYPES.ADD_USER));
   try {
     const createdUser = await addUser(newUser);
-    dispatch(addUserSuccess(createdUser));
-    return createdUser;
+    dispatch(action(ADD_USER.SUCCESS, createdUser));
   } catch (err) {
-    dispatch(addUserFailure(err?.message));
+    dispatch(action(ADD_USER.FAILURE, err?.message));
     throw err;
   } finally {
-    dispatch(stopLoading("ADD_USER"));
+    dispatch(action(LOADING.STOP, LOADING_TYPES.ADD_USER));
   }
 };
 
 export const deleteUserAndRefresh = (id) => async (dispatch) => {
-  dispatch(deleteUserRequest(id));
+  const loadingKey = `${LOADING_TYPES.DELETE_USER}_${id}`;
+
+  dispatch(action(LOADING.START, loadingKey));
   try {
     await deleteUser(id);
-    dispatch(deleteUserSuccess(id));
+    dispatch(action(DELETE_USER.SUCCESS, id));
   } catch (err) {
-    dispatch(deleteUserFailure(err?.message ?? "Failed to delete user."));
+    dispatch(action(DELETE_USER.FAILURE, err?.message ?? "Failed to delete user."));
     throw err;
+  } finally {
+    dispatch(action(LOADING.STOP, loadingKey));
   }
 };
 
-// Combined thunks
+// ---- combined thunks ----
 
-export const changePage = (page) => (dispatch) => {
-  dispatch(setPage(page));
-  dispatch(fetchUsers());
-};
+// export const changePage = (page) => (dispatch) => {
+//   dispatch(action(TABLE_CONTROLS.SET_PAGE, page));
+//   dispatch(fetchUsers());
+// };
 
-export const changeLimit = (limit) => (dispatch) => {
-  dispatch(setLimit(Number(limit)));
-  dispatch(fetchUsers());
-};
+// export const changeLimit = (limit) => (dispatch) => {
+//   dispatch(action(TABLE_CONTROLS.SET_LIMIT, Number(limit)));
+//   dispatch(fetchUsers());
+// };
 
-export const changeSearch = (term) => (dispatch) => {
-  dispatch(setSearch(term));
-  dispatch(fetchUsers());
-};
+// export const changeSearch = (term) => (dispatch) => {
+//   dispatch(action(TABLE_CONTROLS.SET_SEARCH, term));
+//   dispatch(fetchUsers());
+// };
 
-// toggles asc/desc 
-export const changeSort = (field) => (dispatch) => {
-  dispatch(toggleSort(field));
-  dispatch(fetchUsers());
-};
+// // toggles asc/desc
+// export const changeSort = (field) => (dispatch) => {
+//   dispatch(action(TABLE_CONTROLS.TOGGLE_SORT, field));
+//   dispatch(fetchUsers());
+// };
 
-export const changeSortBy = (field) => (dispatch) => {
-  dispatch(setSortBy(field));
-  dispatch(fetchUsers());
-};
+// export const changeSortBy = (field) => (dispatch) => {
+//   dispatch(action(TABLE_CONTROLS.SET_SORT_BY, field));
+//   dispatch(fetchUsers());
+// };
 
-export const changeOrder = (order) => (dispatch) => {
-  dispatch(setOrder(order));
-  dispatch(fetchUsers());
-};
+// export const changeOrder = (order) => (dispatch) => {
+//   dispatch(action(TABLE_CONTROLS.SET_ORDER, order));
+//   dispatch(fetchUsers());
+// };

@@ -34,7 +34,7 @@ async function request(path, opts = {}) {
       headers["Authorization"] = `Bearer ${token}`;
     }
   }
-
+//
   const fetchOptions = { method, headers };
   if (body !== undefined) {
     fetchOptions.body = JSON.stringify(body);

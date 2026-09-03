@@ -1,9 +1,8 @@
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { authLogout } from "../redux/actions/authActions";
-import { getToken } from "../utils/auth";
 
-function Topbar({ authLogout, isAuthenticated }) {
+function Topbar({ authLogout, isAuthenticated, username }) {
   const handleLogout = () => {
     authLogout();
   };
@@ -21,8 +20,11 @@ function Topbar({ authLogout, isAuthenticated }) {
           <span className="navbar-toggler-icon"></span>
         </button>
 
-        <Link to="/" className="navbar-brand ms-3 text-light">
-          Navbar
+        <Link to="/" className="navbar-brand ms-5 text-light">
+          <i className="bi bi-person-gear"></i>
+          <span className="ms-2">
+            {isAuthenticated ? `Welcome, ${username || ""}` : "User Management"}
+          </span>
         </Link>
 
         <div className="d-flex align-items-center ms-auto ms-lg-0 me-3">
@@ -56,6 +58,7 @@ function Topbar({ authLogout, isAuthenticated }) {
 
 const mapStateToProps = (state) => ({
   isAuthenticated: state.auth.isAuthenticated,
+  username: state.auth?.user?.firstName,
 });
 
 const mapDispatchToProps = (dispatch) => ({
