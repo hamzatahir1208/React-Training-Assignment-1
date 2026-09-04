@@ -6,15 +6,13 @@ import Layout from "../../app/Layout";
 import Table from "../../components/Table";
 import TableControls from "../../components/TableControls";
 import UserModal from "../users/UserModal";
-import { USER_COLUMNS, LOADING_TYPES } from "../../constants";
+import { LOADING_TYPES } from "../../constants";
 import {
   fetchUsers,
   deleteUserAndRefresh,
   addUserAndRefresh,
 } from "../../redux/actions/userActions";
 import useUsers from "../../hooks/useUsers";
-
-const sortableColumns = USER_COLUMNS.filter((col) => col.sortable);
 
 const Dashboard = (props) => {
   const {
@@ -35,15 +33,11 @@ const Dashboard = (props) => {
     search,
     sortBy,
     order,
-    totalPages,
-    hasPrevPage,
-    hasNextPage,
+    resetPaginationToggle,
     setPage,
     setLimit,
     setSearch,
     setSort,
-    setSortBy,
-    setOrder,
   } = useUsers({
     initialOptions: {
       page: 1,
@@ -62,10 +56,7 @@ const Dashboard = (props) => {
         <div className="content p-3 d-flex justify-content-between align-items-center">
           <div>
             <h1 className="mb-0">Dashboard</h1>
-            <small className="text-secondary">
-              Total Users: {users.total}{" "}
-              {users.total > 0 && `(Page ${page} of ${totalPages})`}
-            </small>
+            <small className="text-secondary">Total Users: {users.total}</small>
           </div>
 
           <Button
@@ -82,24 +73,13 @@ const Dashboard = (props) => {
           <Alert
             variant="danger"
             dismissible
-            onClose={() => clearActionError()}
             className="mt-3"
           >
             {users.actionError}
           </Alert>
         )}
 
-        <TableControls
-          search={search}
-          onSearchChange={setSearch}
-          sortBy={sortBy}
-          onSortByChange={setSortBy}
-          order={order}
-          onOrderChange={setOrder}
-          limit={limit}
-          onLimitChange={setLimit}
-          sortableColumns={sortableColumns}
-        />
+        <TableControls search={search} onSearchChange={setSearch} />
 
         <Row className="mt-3">
           <Col xs={12}>
@@ -108,16 +88,16 @@ const Dashboard = (props) => {
             ) : (
               <Table
                 data={users.data}
-                currentPage={page}
-                totalPages={totalPages}
-                hasPrevPage={hasPrevPage}
-                hasNextPage={hasNextPage}
-                onPageChange={setPage}
+                totalRows={users.total}
+                page={page}
+                limit={limit}
                 sortBy={sortBy}
-                sortOrder={order}
-                onSort={setSort}
+                order={order}
+                onSortChange={setSort}
+                onPageChange={setPage}
+                onLimitChange={setLimit}
+                resetPaginationToggle={resetPaginationToggle}
                 handleDelete={deleteUserAndRefresh}
-                columns={USER_COLUMNS}
                 loading={isFetching}
               />
             )}

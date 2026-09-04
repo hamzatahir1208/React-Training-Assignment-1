@@ -37,7 +37,7 @@ export const deleteUserAndRefresh = (id) => async (dispatch) => {
     await deleteUser(id);
     dispatch(action(DELETE_USER.SUCCESS, id));
   } catch (err) {
-    dispatch(action(DELETE_USER.FAILURE, err?.message ?? "Failed to delete user."));
+    dispatch(action(DELETE_USER.FAILURE, err?.message));
     throw err;
   } finally {
     dispatch(action(LOADING.STOP, loadingKey));

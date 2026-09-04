@@ -7,6 +7,12 @@ export default function useUsers({ initialOptions, fetchUsers, total = 0 }) {
   const [sortBy, setSortByState] = useState(initialOptions.sortBy);
   const [order, setOrderState] = useState(initialOptions.order);
 
+  const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
+  const resetToFirstPage = () => {
+    setPageState(1);
+    setResetPaginationToggle((prev) => !prev);
+  };
+
   const totalPages = Math.max(1, Math.ceil(total / limit));
   const hasPrevPage = page > 1;
   const hasNextPage = page < totalPages;
@@ -21,42 +27,28 @@ export default function useUsers({ initialOptions, fetchUsers, total = 0 }) {
 
   const setLimit = useCallback((newLimit) => {
     setLimitState(newLimit);
-    setPageState(1);
+    resetToFirstPage();
   }, []);
 
   const setSearch = useCallback((term) => {
     setSearchState(term);
-    setPageState(1);
-  }, []);
-
-  const setSort = useCallback((field) => {
-    setSortByState((prevField) => {
-      if (prevField === field) {
-        setOrderState((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
-      } else {
-        setOrderState("asc");
-      }
-      return field;
-    });
-    setPageState(1);
-  }, []);
-
-  const setOrder = useCallback((newOrder) => {
-    setOrderState(newOrder);
-    setPageState(1);
+    resetToFirstPage();
   }, []);
 
   const setSortBy = useCallback((field) => {
     setSortByState(field);
-    setPageState(1);
+    resetToFirstPage();
   }, []);
 
-  const nextPage = useCallback(() => {
-    setPageState((prev) => (prev < totalPages ? prev + 1 : prev));
-  }, [totalPages]);
+  const setOrder = useCallback((newOrder) => {
+    setOrderState(newOrder);
+    resetToFirstPage();
+  }, []);
 
-  const prevPage = useCallback(() => {
-    setPageState((prev) => (prev > 1 ? prev - 1 : prev));
+  const setSort = useCallback((field, direction) => {
+    setSortByState(field);
+    setOrderState(direction);
+    resetToFirstPage();
   }, []);
 
   return {
@@ -68,13 +60,12 @@ export default function useUsers({ initialOptions, fetchUsers, total = 0 }) {
     totalPages,
     hasPrevPage,
     hasNextPage,
+    resetPaginationToggle,
     setPage,
     setLimit,
     setSearch,
-    setSort,
     setSortBy,
     setOrder,
-    nextPage,
-    prevPage,
+    setSort,
   };
 }

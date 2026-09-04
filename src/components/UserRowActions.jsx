@@ -4,10 +4,8 @@ import { Spinner, Modal, Alert, Button } from "react-bootstrap";
 import { createLoadingSelector } from "../redux/reducers/loadingReducer";
 import { LOADING_TYPES } from "../constants";
 
-function UserTableRow({ user, onDelete, isRowDeleting }) {
+function UserRowActions({ user, onDelete, isRowDeleting }) {
   const [showConfirm, setShowConfirm] = useState(false);
-
-  const handleDeleteClick = () => setShowConfirm(true);
 
   const handleCancel = () => {
     if (isRowDeleting) return;
@@ -21,30 +19,20 @@ function UserTableRow({ user, onDelete, isRowDeleting }) {
 
   return (
     <>
-      <tr>
-        <td>{user.id}</td>
-        <td>{user.firstName}</td>
-        <td>{user.lastName}</td>
-        <td>{user.age}</td>
-        <td>{user.email}</td>
-        <td>{user.role}</td>
-        <td>
-          <button
-            type="button"
-            className="btn text-light btn-small"
-            onClick={handleDeleteClick}
-            disabled={isRowDeleting}
-            aria-label={`Delete ${user.firstName} ${user.lastName}`}
-            title="Delete User"
-          >
-            {isRowDeleting ? (
-              <Spinner animation="border" size="sm" variant="danger" role="status" aria-hidden="true" />
-            ) : (
-              <i className="bi bi-x-circle text-danger fs-5"></i>
-            )}
-          </button>
-        </td>
-      </tr>
+      <button
+        type="button"
+        className="btn btn-small"
+        onClick={() => setShowConfirm(true)}
+        disabled={isRowDeleting}
+        aria-label={`Delete ${user.firstName} ${user.lastName}`}
+        title="Delete User"
+      >
+        {isRowDeleting ? (
+          <Spinner animation="border" size="sm" variant="danger" role="status" aria-hidden="true" />
+        ) : (
+          <i className="bi bi-x-circle text-danger fs-5"></i>
+        )}
+      </button>
 
       <Modal show={showConfirm} onHide={handleCancel} centered backdrop={isRowDeleting ? "static" : true}>
         <Modal.Header closeButton={!isRowDeleting}>
@@ -91,4 +79,4 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-export default connect(mapStateToProps)(UserTableRow);
+export default connect(mapStateToProps)(UserRowActions);

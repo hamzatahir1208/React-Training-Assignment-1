@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { authLogout } from "../redux/actions/authActions";
 
-function Topbar({ authLogout, isAuthenticated, username }) {
+function Topbar({ authLogout, isAuthenticated }) {
   const handleLogout = () => {
     authLogout();
   };
@@ -23,7 +23,7 @@ function Topbar({ authLogout, isAuthenticated, username }) {
         <Link to="/" className="navbar-brand ms-5 text-light">
           <i className="bi bi-person-gear"></i>
           <span className="ms-2">
-            {isAuthenticated ? `Welcome, ${username || ""}` : "User Management"}
+            Dashboard
           </span>
         </Link>
 
@@ -58,7 +58,6 @@ function Topbar({ authLogout, isAuthenticated, username }) {
 
 const mapStateToProps = (state) => ({
   isAuthenticated: state.auth.isAuthenticated,
-  username: state.auth?.user?.firstName,
 });
 
 const mapDispatchToProps = (dispatch) => ({
