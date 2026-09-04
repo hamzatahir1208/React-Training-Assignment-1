@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
-export default function useUsers({initialOptions, fetchUsers}) {
+export default function useUsers({ initialOptions, fetchUsers, total = 0 }) {
   const [page, setPageState] = useState(initialOptions.page);
   const [limit, setLimitState] = useState(initialOptions.limit);
   const [search, setSearchState] = useState(initialOptions.search);
@@ -16,14 +16,11 @@ export default function useUsers({initialOptions, fetchUsers}) {
   }, [page, limit, search, sortBy, order]);
 
   const setPage = useCallback((newPage) => {
-    setPageState((prev) => {
-      const target = typeof newPage === "function" ? newPage(prev) : newPage;
-      return Math.max(1, target);
-    });
+    setPageState(Math.max(1, newPage));
   }, []);
 
   const setLimit = useCallback((newLimit) => {
-    setLimitState(Number(newLimit));
+    setLimitState(newLimit);
     setPageState(1);
   }, []);
 
@@ -63,22 +60,14 @@ export default function useUsers({initialOptions, fetchUsers}) {
   }, []);
 
   return {
-    users,
-    total,
     page,
     limit,
     search,
     sortBy,
     order,
-    sortOrder: order,
     totalPages,
     hasPrevPage,
     hasNextPage,
-    loading,
-    error,
-    isAdding,
-    deletingId,
-    actionError,
     setPage,
     setLimit,
     setSearch,
@@ -87,6 +76,5 @@ export default function useUsers({initialOptions, fetchUsers}) {
     setOrder,
     nextPage,
     prevPage,
-    reload: loadUsers,
   };
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { connect } from "react-redux";
 import { Container, Row, Col, Button, Alert } from "react-bootstrap";
 import { createLoadingSelector } from "../../redux/reducers/loadingReducer";
@@ -9,14 +9,8 @@ import UserModal from "../users/UserModal";
 import { USER_COLUMNS, LOADING_TYPES } from "../../constants";
 import {
   fetchUsers,
-  // changePage,
-  // changeLimit,
-  // changeSearch,
-  // changeSort,
-  // changeSortBy,
-  // changeOrder,
-  // deleteUserAndRefresh,
-  // addUserAndRefresh,
+  deleteUserAndRefresh,
+  addUserAndRefresh,
 } from "../../redux/actions/userActions";
 import useUsers from "../../hooks/useUsers";
 
@@ -28,47 +22,39 @@ const Dashboard = (props) => {
     isFetching,
     isAdding,
     fetchUsers,
-    // changePage,
-    // changeLimit,
-    // changeSearch,
-    // changeSort,
-    // changeSortBy,
-    // changeOrder,
-    // deleteUserAndRefresh,
-    // addUserAndRefresh,
+    deleteUserAndRefresh,
+    addUserAndRefresh,
   } = props;
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [modalError, setModalError] = useState("");
 
-  // const totalPages = Math.max(1, Math.ceil(users.total / users.limit));
-  // const hasPrevPage = users.page > 1;
-  // const hasNextPage = users.page < totalPages;
-
   const {
+    page,
+    limit,
+    search,
+    sortBy,
+    order,
+    totalPages,
+    hasPrevPage,
+    hasNextPage,
     setPage,
     setLimit,
     setSearch,
     setSort,
     setSortBy,
     setOrder,
-    nextPage,
-    prevPage,
-    reload
   } = useUsers({
     initialOptions: {
       page: 1,
       limit: 10,
       search: "",
       sortBy: "id",
-      order: "asc"
+      order: "asc",
     },
-    fetchUsers
+    fetchUsers,
+    total: users.total,
   });
-
-  // useEffect(() => {
-  //   fetchUsers();
-  // }, [fetchUsers]);
 
   return (
     <Layout>
@@ -78,7 +64,7 @@ const Dashboard = (props) => {
             <h1 className="mb-0">Dashboard</h1>
             <small className="text-secondary">
               Total Users: {users.total}{" "}
-              {users.total > 0 && `(Page ${users.page} of ${totalPages})`}
+              {users.total > 0 && `(Page ${page} of ${totalPages})`}
             </small>
           </div>
 
@@ -96,6 +82,7 @@ const Dashboard = (props) => {
           <Alert
             variant="danger"
             dismissible
+            onClose={() => clearActionError()}
             className="mt-3"
           >
             {users.actionError}
@@ -103,14 +90,14 @@ const Dashboard = (props) => {
         )}
 
         <TableControls
-          search={users.search}
-          onSearchChange={changeSearch}
-          sortBy={users.sortBy}
-          onSortByChange={changeSortBy}
-          order={users.order}
-          onOrderChange={changeOrder}
-          limit={users.limit}
-          onLimitChange={changeLimit}
+          search={search}
+          onSearchChange={setSearch}
+          sortBy={sortBy}
+          onSortByChange={setSortBy}
+          order={order}
+          onOrderChange={setOrder}
+          limit={limit}
+          onLimitChange={setLimit}
           sortableColumns={sortableColumns}
         />
 
@@ -121,14 +108,14 @@ const Dashboard = (props) => {
             ) : (
               <Table
                 data={users.data}
-                currentPage={users.page}
+                currentPage={page}
                 totalPages={totalPages}
                 hasPrevPage={hasPrevPage}
                 hasNextPage={hasNextPage}
-                onPageChange={changePage}
-                sortBy={users.sortBy}
-                sortOrder={users.order}
-                onSort={changeSort}
+                onPageChange={setPage}
+                sortBy={sortBy}
+                sortOrder={order}
+                onSort={setSort}
                 handleDelete={deleteUserAndRefresh}
                 columns={USER_COLUMNS}
                 loading={isFetching}
@@ -154,21 +141,15 @@ const isAddingSelector = createLoadingSelector(LOADING_TYPES.ADD_USER);
 const isFetchingSelector = createLoadingSelector(LOADING_TYPES.FETCH_USERS);
 
 const mapStateToProps = (state) => ({
-  // users: state.users,
+  users: state.users,
   isAdding: isAddingSelector(state),
   isFetching: isFetchingSelector(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchUsers: () => dispatch(fetchUsers()),
-  // changePage: (page) => dispatch(changePage(page)),
-  // changeLimit: (limit) => dispatch(changeLimit(limit)),
-  // changeSearch: (term) => dispatch(changeSearch(term)),
-  // changeSort: (field) => dispatch(changeSort(field)),
-  // changeSortBy: (field) => dispatch(changeSortBy(field)),
-  // changeOrder: (order) => dispatch(changeOrder(order)),
-  // deleteUserAndRefresh: (id) => dispatch(deleteUserAndRefresh(id)),
-  // addUserAndRefresh: (user) => dispatch(addUserAndRefresh(user)),
+  fetchUsers: (options) => dispatch(fetchUsers(options)),
+  deleteUserAndRefresh: (id) => dispatch(deleteUserAndRefresh(id)),
+  addUserAndRefresh: (user) => dispatch(addUserAndRefresh(user)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);
