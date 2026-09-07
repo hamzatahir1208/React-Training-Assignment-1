@@ -2,15 +2,26 @@ import { getUsers, addUser, deleteUser } from "../../services/userService";
 import { action } from "./actions";
 import { FETCH_USERS, ADD_USER, DELETE_USER, LOADING, LOADING_TYPES } from "../../constants";
 
-export const fetchUsers = ({ page, limit, search, sortBy, order }) => async (dispatch) => {
+export const fetchUsers = ({ page, limit, search, sortBy, order }) => async (dispatch, getState) => {
+  const { deletedIds } = getState().users;
 
   dispatch(action(LOADING.START, LOADING_TYPES.FETCH_USERS));
   try {
-    const result = await getUsers({ page, limit, search, sortBy, order });
+    const newLimit = page * limit + deletedIds.length;
 
-    dispatch( action(FETCH_USERS.SUCCESS, { users: result?.users, total: result?.total, })  );
+    const result = await getUsers({ skip: 0, limit: newLimit, search, sortBy, order });
+
+    const rawUsers = result?.users;
+    const filtered = rawUsers.filter((u) => !deletedIds.includes(u.id));
+
+    const startIndex = (page - 1) * limit;
+    const pageUsers = filtered.slice(startIndex, startIndex + limit);
+
+    const adjustedTotal = Math.max(0, result?.total - deletedIds.length);
+
+    dispatch(action(FETCH_USERS.SUCCESS, { users: pageUsers, total: adjustedTotal }));
   } catch (err) {
-    dispatch(action(FETCH_USERS.FAILURE, err.message ));
+    dispatch(action(FETCH_USERS.FAILURE, err.message));
   } finally {
     dispatch(action(LOADING.STOP, LOADING_TYPES.FETCH_USERS));
   }

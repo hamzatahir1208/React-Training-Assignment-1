@@ -1,9 +1,11 @@
-import { FETCH_USERS, ADD_USER, DELETE_USER, TABLE_CONTROLS, CLEAR_ACTION_ERROR } from "../../constants";
+import { FETCH_USERS, ADD_USER, DELETE_USER } from "../../constants";
 
 const initialState = {
   data: [],
   total: 0,
+  deletedIds: [],
   error: null,
+  actionError: null,
 };
 
 export default function userReducer(state = initialState, action) {
@@ -25,7 +27,6 @@ export default function userReducer(state = initialState, action) {
         data: [action.payload, ...state.data],
         total: state.total + 1,
         actionError: null,
-        
       };
 
     case ADD_USER.FAILURE:
@@ -36,6 +37,7 @@ export default function userReducer(state = initialState, action) {
         ...state,
         data: state.data.filter((u) => u.id !== action.payload),
         total: Math.max(0, state.total - 1),
+        deletedIds: [...state.deletedIds, action.payload],
         actionError: null,
       };
 

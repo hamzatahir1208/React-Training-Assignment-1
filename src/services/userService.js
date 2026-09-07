@@ -3,15 +3,15 @@ import {USERS_ENDPOINT, USERS_ADD_ENDPOINT} from "../utils/endpoints";
 
 export const getUsers = async (params = {}) => {
   const {
-    page = 1,
+    skip = 0,
     limit = 10,
     search = "",
     sortBy = "id",
     order = "asc",
   } = params;
 
-  const resolvedOrder = order;
-  const skip = (page - 1) * limit;
+  // const resolvedOrder = order;
+  // const skip = (page - 1) * limit;
 
   const query = new URLSearchParams();
   query.set("limit", String(limit));
@@ -20,8 +20,8 @@ export const getUsers = async (params = {}) => {
   if (sortBy) {
     query.set("sortBy", sortBy);
   }
-  if (resolvedOrder) {
-    query.set("order", resolvedOrder);
+  if (order) {
+    query.set("order", order);
   }
 
   if (search && search.trim()) {

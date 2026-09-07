@@ -50,6 +50,11 @@ const Dashboard = (props) => {
     total: users.total,
   });
 
+  const handleDeleteUser = async (id) => {
+    await deleteUserAndRefresh(id);
+    fetchUsers({ page, limit, search, sortBy, order });
+  };
+
   return (
     <Layout>
       <Container fluid className="dashboard p-5">
@@ -97,7 +102,7 @@ const Dashboard = (props) => {
                 onPageChange={setPage}
                 onLimitChange={setLimit}
                 resetPaginationToggle={resetPaginationToggle}
-                handleDelete={deleteUserAndRefresh}
+                handleDelete={handleDeleteUser}
                 loading={isFetching}
               />
             )}
